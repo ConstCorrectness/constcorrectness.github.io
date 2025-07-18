@@ -24,8 +24,9 @@ const HeroExperience = () => {
         maxPolarAngle={Math.PI / 2}
       />
       <group
-        scale={isMobile ? 0.7 : 2}
-        position={[0.0, -3.5, 0.0]}
+        scale={isMobile ? 1.4 : 2}
+        position={[0.0, -2.5, 0.0]}
+        rotation={[0.0, -Math.PI / 10, 0.0]}
         
       >
         <HorribleRoom />
