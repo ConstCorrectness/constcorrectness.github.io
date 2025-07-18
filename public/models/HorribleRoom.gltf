@@ -12,9 +12,11 @@
         1,
         2,
         3,
-        4,
-        5
+        4
       ]
+    },
+    {
+      "name": "Scene.001"
     }
   ],
   "nodes": [
@@ -37,15 +39,6 @@
     {
       "mesh": 4,
       "name": "Desk"
-    },
-    {
-      "mesh": 5,
-      "name": "Room",
-      "translation": [
-        -13.279407501220703,
-        0,
-        0
-      ]
     }
   ],
   "materials": [
@@ -154,38 +147,6 @@
           },
           "indices": 19,
           "material": 2
-        }
-      ]
-    },
-    {
-      "name": "Cube.013",
-      "primitives": [
-        {
-          "attributes": {
-            "POSITION": 20,
-            "NORMAL": 21,
-            "TEXCOORD_0": 22
-          },
-          "indices": 23,
-          "material": 2
-        },
-        {
-          "attributes": {
-            "POSITION": 24,
-            "NORMAL": 25,
-            "TEXCOORD_0": 26
-          },
-          "indices": 3,
-          "material": 0
-        },
-        {
-          "attributes": {
-            "POSITION": 27,
-            "NORMAL": 28,
-            "TEXCOORD_0": 29
-          },
-          "indices": 30,
-          "material": 1
         }
       ]
     }
@@ -360,102 +321,6 @@
       "componentType": 5123,
       "count": 300,
       "type": "SCALAR"
-    },
-    {
-      "bufferView": 20,
-      "componentType": 5126,
-      "count": 284,
-      "max": [
-        1.856765627861023,
-        1.0944205522537231,
-        0.14403760433197021
-      ],
-      "min": [
-        -1.3393610715866089,
-        0.08528256416320801,
-        -1.9999995231628418
-      ],
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 21,
-      "componentType": 5126,
-      "count": 284,
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 22,
-      "componentType": 5126,
-      "count": 284,
-      "type": "VEC2"
-    },
-    {
-      "bufferView": 23,
-      "componentType": 5123,
-      "count": 444,
-      "type": "SCALAR"
-    },
-    {
-      "bufferView": 24,
-      "componentType": 5126,
-      "count": 24,
-      "max": [
-        1.9999996423721313,
-        0.08948971331119537,
-        1.9999996423721313
-      ],
-      "min": [
-        -1.9999996423721313,
-        0,
-        -1.9999996423721313
-      ],
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 25,
-      "componentType": 5126,
-      "count": 24,
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 26,
-      "componentType": 5126,
-      "count": 24,
-      "type": "VEC2"
-    },
-    {
-      "bufferView": 27,
-      "componentType": 5126,
-      "count": 104,
-      "max": [
-        1.9999996423721313,
-        2.089489459991455,
-        1.9999996423721313
-      ],
-      "min": [
-        -1.999999761581421,
-        0.08948972076177597,
-        -2.065073013305664
-      ],
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 28,
-      "componentType": 5126,
-      "count": 104,
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 29,
-      "componentType": 5126,
-      "count": 104,
-      "type": "VEC2"
-    },
-    {
-      "bufferView": 30,
-      "componentType": 5123,
-      "count": 204,
-      "type": "SCALAR"
     }
   ],
   "bufferViews": [
@@ -578,78 +443,12 @@
       "byteLength": 600,
       "byteOffset": 13952,
       "target": 34963
-    },
-    {
-      "buffer": 0,
-      "byteLength": 3408,
-      "byteOffset": 14552,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 3408,
-      "byteOffset": 17960,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 2272,
-      "byteOffset": 21368,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 888,
-      "byteOffset": 23640,
-      "target": 34963
-    },
-    {
-      "buffer": 0,
-      "byteLength": 288,
-      "byteOffset": 24528,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 288,
-      "byteOffset": 24816,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 192,
-      "byteOffset": 25104,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 1248,
-      "byteOffset": 25296,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 1248,
-      "byteOffset": 26544,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 832,
-      "byteOffset": 27792,
-      "target": 34962
-    },
-    {
-      "buffer": 0,
-      "byteLength": 408,
-      "byteOffset": 28624,
-      "target": 34963
     }
   ],
   "buffers": [
     {
       "uri": "HorribleRoom_data.bin",
-      "byteLength": 29032
+      "byteLength": 14552
     }
   ]
 }
