@@ -3,6 +3,12 @@
     "generator": "Khronos glTF Blender I/O v4.4.56",
     "version": "2.0"
   },
+  "extensionsUsed": [
+    "EXT_texture_webp"
+  ],
+  "extensionsRequired": [
+    "EXT_texture_webp"
+  ],
   "scene": 0,
   "scenes": [
     {
@@ -12,7 +18,10 @@
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6,
+        7
       ]
     },
     {
@@ -39,13 +48,54 @@
     {
       "mesh": 4,
       "name": "Desk"
+    },
+    {
+      "mesh": 5,
+      "name": "BookShelf",
+      "scale": [
+        0.20471589267253876,
+        0.7715467214584351,
+        0.4951286315917969
+      ],
+      "translation": [
+        -1.7168724536895752,
+        0.8750522136688232,
+        0
+      ]
+    },
+    {
+      "mesh": 6,
+      "name": "Drawers",
+      "scale": [
+        0.20471589267253876,
+        0.4515112638473511,
+        0.5141094923019409
+      ],
+      "translation": [
+        -1.7168724536895752,
+        0.5493984222412109,
+        1.2225873470306396
+      ]
+    },
+    {
+      "mesh": 7,
+      "name": "Carpet",
+      "translation": [
+        0,
+        0.09177027642726898,
+        0
+      ]
     }
   ],
   "materials": [
     {
+      "alphaMode": "BLEND",
       "doubleSided": true,
-      "name": "TileFloor",
+      "name": "HorribleTileTexture",
       "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
         "metallicFactor": 0,
         "roughnessFactor": 0.5
       }
@@ -74,6 +124,18 @@
           0.012320302426815033,
           1
         ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "doubleSided": true,
+      "name": "TileMaterial",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
         "metallicFactor": 0,
         "roughnessFactor": 0.5
       }
@@ -149,6 +211,76 @@
           "material": 2
         }
       ]
+    },
+    {
+      "name": "Cube",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 20,
+            "NORMAL": 21,
+            "TEXCOORD_0": 22
+          },
+          "indices": 23,
+          "material": 2
+        }
+      ]
+    },
+    {
+      "name": "Cube.001",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 24,
+            "NORMAL": 25,
+            "TEXCOORD_0": 26
+          },
+          "indices": 23,
+          "material": 2
+        }
+      ]
+    },
+    {
+      "name": "Plane.003",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 27,
+            "NORMAL": 28,
+            "TEXCOORD_0": 29
+          },
+          "indices": 30,
+          "material": 3
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "extensions": {
+        "EXT_texture_webp": {
+          "source": 0
+        }
+      },
+      "sampler": 0
+    },
+    {
+      "extensions": {
+        "EXT_texture_webp": {
+          "source": 1
+        }
+      },
+      "sampler": 0
+    }
+  ],
+  "images": [
+    {
+      "name": "TileTexture",
+      "uri": "HorribleRoom_img0.webp"
+    },
+    {
+      "name": "gray-textile-texture",
+      "uri": "HorribleRoom_img1.webp"
     }
   ],
   "accessors": [
@@ -321,6 +453,102 @@
       "componentType": 5123,
       "count": 300,
       "type": "SCALAR"
+    },
+    {
+      "bufferView": 20,
+      "componentType": 5126,
+      "count": 200,
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 21,
+      "componentType": 5126,
+      "count": 200,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 22,
+      "componentType": 5126,
+      "count": 200,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 23,
+      "componentType": 5123,
+      "count": 588,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 24,
+      "componentType": 5126,
+      "count": 200,
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 25,
+      "componentType": 5126,
+      "count": 200,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 26,
+      "componentType": 5126,
+      "count": 200,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 27,
+      "componentType": 5126,
+      "count": 24,
+      "max": [
+        1,
+        0.019999999552965164,
+        1
+      ],
+      "min": [
+        -1,
+        0,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 28,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 29,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 30,
+      "componentType": 5123,
+      "count": 36,
+      "type": "SCALAR"
     }
   ],
   "bufferViews": [
@@ -443,12 +671,84 @@
       "byteLength": 600,
       "byteOffset": 13952,
       "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2400,
+      "byteOffset": 14552,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2400,
+      "byteOffset": 16952,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1600,
+      "byteOffset": 19352,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1176,
+      "byteOffset": 20952,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2400,
+      "byteOffset": 22128,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 2400,
+      "byteOffset": 24528,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1600,
+      "byteOffset": 26928,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 288,
+      "byteOffset": 28528,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 288,
+      "byteOffset": 28816,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 192,
+      "byteOffset": 29104,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 72,
+      "byteOffset": 29296,
+      "target": 34963
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987
     }
   ],
   "buffers": [
     {
       "uri": "HorribleRoom_data.bin",
-      "byteLength": 14552
+      "byteLength": 29368
     }
   ]
 }

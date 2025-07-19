@@ -10,16 +10,14 @@ export function HorribleRoom(props) {
   const { nodes, materials } = useGLTF('/models/HorribleRoom.glb')
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.Floor.geometry} material={materials.TileFloor} />
+      <mesh geometry={nodes.Floor.geometry} material={materials.HorribleTileTexture} />
       <mesh geometry={nodes.FrontWall.geometry} material={materials.Wall} />
       <mesh geometry={nodes.SideWall.geometry} material={materials.Wall} />
       <mesh geometry={nodes.SideDesk.geometry} material={materials.DeskBlack} />
       <mesh geometry={nodes.Desk.geometry} material={materials.DeskBlack} />
-      <group position={[-13.279, 0, 0]}>
-        <mesh geometry={nodes.Cube013.geometry} material={materials.DeskBlack} />
-        <mesh geometry={nodes.Cube013_1.geometry} material={materials.TileFloor} />
-        <mesh geometry={nodes.Cube013_2.geometry} material={materials.Wall} />
-      </group>
+      <mesh geometry={nodes.BookShelf.geometry} material={materials.DeskBlack} position={[-1.717, 0.875, 0]} scale={[0.205, 0.772, 0.495]} />
+      <mesh geometry={nodes.Drawers.geometry} material={materials.DeskBlack} position={[-1.717, 0.549, 1.223]} scale={[0.205, 0.452, 0.514]} />
+      <mesh geometry={nodes.Carpet.geometry} material={materials.TileMaterial} position={[0, 0.092, 0]} />
     </group>
   )
 }
