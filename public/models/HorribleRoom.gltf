@@ -3,12 +3,6 @@
     "generator": "Khronos glTF Blender I/O v4.4.56",
     "version": "2.0"
   },
-  "extensionsUsed": [
-    "EXT_texture_webp"
-  ],
-  "extensionsRequired": [
-    "EXT_texture_webp"
-  ],
   "scene": 0,
   "scenes": [
     {
@@ -257,30 +251,22 @@
   ],
   "textures": [
     {
-      "extensions": {
-        "EXT_texture_webp": {
-          "source": 0
-        }
-      },
-      "sampler": 0
+      "sampler": 0,
+      "source": 0
     },
     {
-      "extensions": {
-        "EXT_texture_webp": {
-          "source": 1
-        }
-      },
-      "sampler": 0
+      "sampler": 0,
+      "source": 1
     }
   ],
   "images": [
     {
       "name": "TileTexture",
-      "uri": "HorribleRoom_img0.webp"
+      "uri": "HorribleRoom_img0.png"
     },
     {
       "name": "gray-textile-texture",
-      "uri": "HorribleRoom_img1.webp"
+      "uri": "HorribleRoom_img1.png"
     }
   ],
   "accessors": [
