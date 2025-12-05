@@ -6,7 +6,7 @@ Command: npx gltfjsx@6.5.3 .\HorribleRoom.glb
 import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
-export function Model(props) {
+export function HorribleRoom(props) {
   const { nodes, materials } = useGLTF('/models/HorribleRoom.glb')
   return (
     <group {...props} dispose={null}>
