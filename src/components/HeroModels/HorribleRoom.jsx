@@ -6,7 +6,7 @@ Command: npx gltfjsx@6.5.3 .\HorribleRoom.glb
 import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
-export function HorribleRoom(props) {
+export function Model(props) {
   const { nodes, materials } = useGLTF('/models/HorribleRoom.glb')
   return (
     <group {...props} dispose={null}>
@@ -18,6 +18,11 @@ export function HorribleRoom(props) {
       <mesh geometry={nodes.BookShelf.geometry} material={materials.DeskBlack} position={[-1.717, 0.875, 0]} scale={[0.205, 0.772, 0.495]} />
       <mesh geometry={nodes.Drawers.geometry} material={materials.DeskBlack} position={[-1.717, 0.549, 1.223]} scale={[0.205, 0.452, 0.514]} />
       <mesh geometry={nodes.Carpet.geometry} material={materials.TileMaterial} position={[0, 0.092, 0]} />
+      <group position={[-1.825, 1.64, -1.254]} scale={[0.034, 0.352, 0.271]}>
+        <mesh geometry={nodes.Cube004.geometry} material={materials.FrontPoster} />
+        <mesh geometry={nodes.Cube004_1.geometry} material={materials.DeskBlack} />
+      </group>
+      <mesh geometry={nodes.PosterStand.geometry} material={materials.DeskBlack} position={[-1.85, 1.245, -1.255]} scale={[0.086, 0.035, 0.373]} />
     </group>
   )
 }
