@@ -1,0 +1,15 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: 941772cd-3130-4f6e-91e9-09d342b38ce0
+  # title:
+  # description:
+  # keywords: []
+  # authors: []
+  github: https://github.com/ConstCorrectness/constcorrectness.github.io
+  # To autogenerate a Table of Contents, run "jupyter book init --write-toc"
+site:
+  template: book-theme
+  # options:
+  #   favicon: favicon.ico
+  #   logo: site_logo.png

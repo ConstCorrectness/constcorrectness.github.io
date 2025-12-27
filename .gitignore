@@ -1,0 +1,44 @@
+# --- Node.js & Vite ---
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Python & uv ---
+# Virtual environments (uv creates .venv by default)
+.venv/
+venv/
+ENV/
+env/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Jupyter Book ---
+# Ignore the build artifacts inside the book folder
+jupyter-books/_build/
+
+# Ignore Jupyter checkpoints (autosaves)
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# --- Generated Website Content ---
+# We ignore this because the build script generates it automatically.
+# We don't want to commit the compiled HTML to the main branch.
+public/notes/
+
+# --- IDEs & Editors ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
