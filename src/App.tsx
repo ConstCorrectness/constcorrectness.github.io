@@ -1,20 +1,18 @@
 import React from 'react';
-import { Container, Typography, Paper, Box, Button, Grid } from '@mui/material'; // Standard Grid import
+import { Container, Typography, Paper, Box, Button } from '@mui/material';
 import { Layout } from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
 import { ModelViewer } from './components/ModelViewer';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const App: React.FC = () => {
   return (
     <Layout>
-      {/* --- HERO SECTION --- */}
       <Box sx={{ bgcolor: '#1e1e1e', pt: 8, pb: 8, borderBottom: '1px solid #333' }}>
         <Container maxWidth="xl">
-          {/* Standard Grid requires 'container' on the parent */}
-          <Grid container spacing={4} alignItems="center">
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4 }}>
             
-            {/* Standard Grid requires 'item' on the children */}
-            <Grid item xs={12} md={6}>
+            <Box sx={{ flex: '1 1 500px' }}>
               <Typography variant="overline" color="#61dafb" sx={{ letterSpacing: 2 }}>
                 Portfolio & Documentation
               </Typography>
@@ -34,66 +32,44 @@ const App: React.FC = () => {
               >
                 Read the Notes
               </Button>
-            </Grid>
+            </Box>
 
-            {/* Right: 3D Viewer */}
-            <Grid item xs={12} md={6}>
-              <Paper 
-                elevation={3} 
-                sx={{ 
-                  height: 400, 
-                  bgcolor: '#121212', 
-                  borderRadius: 4, 
-                  overflow: 'hidden',
-                  border: '1px solid #333'
-                }}
-              >
-                <ModelViewer modelUrl="/models/HorribleRoom.glb" />
+            <Box sx={{ flex: '1 1 500px' }}>
+              <Paper elevation={3} sx={{ height: 400, bgcolor: '#121212', borderRadius: 4, overflow: 'hidden', border: '1px solid #333' }}>
+                <ErrorBoundary>
+                  <ModelViewer modelUrl="/models/HorribleRoom.glb" />
+                </ErrorBoundary>
               </Paper>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Container>
       </Box>
 
-      {/* --- DASHBOARD / LATEST UPDATES --- */}
+      {/* Dashboard Section */}
       <Container maxWidth="lg" sx={{ mt: 6, mb: 6 }}>
-        <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-          Latest Dashboard
-        </Typography>
-        <Grid container spacing={3}>
-          {/* Card 1 */}
-          <Grid item xs={12} md={4}>
+        <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>Latest Dashboard</Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+          <Box sx={{ flex: '1 1 300px' }}>
             <Paper sx={{ p: 3, bgcolor: '#252525', color: 'white' }}>
-              <Typography variant="h6" gutterBottom color="#61dafb">Project Alpha</Typography>
-              <Typography variant="body2" color="gray">
-                Implementing a custom rendering engine using Vulkan and C++.
-              </Typography>
+              <Typography variant="h6" color="#61dafb">Project Alpha</Typography>
+              <Typography variant="body2" color="gray">Implementing a custom rendering engine.</Typography>
             </Paper>
-          </Grid>
-          
-          {/* Card 2 */}
-          <Grid item xs={12} md={4}>
+          </Box>
+          <Box sx={{ flex: '1 1 300px' }}>
             <Paper sx={{ p: 3, bgcolor: '#252525', color: 'white' }}>
-              <Typography variant="h6" gutterBottom color="#61dafb">Jupyter Integration</Typography>
-              <Typography variant="body2" color="gray">
-                Automating CI/CD pipelines to convert Python notebooks into static HTML.
-              </Typography>
+              <Typography variant="h6" color="#61dafb">Jupyter Integration</Typography>
+              <Typography variant="body2" color="gray">Automating Python to HTML conversion.</Typography>
             </Paper>
-          </Grid>
-
-          {/* Card 3 */}
-          <Grid item xs={12} md={4}>
+          </Box>
+          <Box sx={{ flex: '1 1 300px' }}>
             <Paper sx={{ p: 3, bgcolor: '#252525', color: 'white' }}>
-              <Typography variant="h6" gutterBottom color="#61dafb">Asset Pipeline</Typography>
-              <Typography variant="body2" color="gray">
-                Optimizing GLTF files for faster loading on React clients.
-              </Typography>
+              <Typography variant="h6" color="#61dafb">Asset Pipeline</Typography>
+              <Typography variant="body2" color="gray">Optimizing GLTF files.</Typography>
             </Paper>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Container>
     </Layout>
   );
 }
-
 export default App;

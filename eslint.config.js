@@ -1,23 +1,45 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import globals from "globals";
+import tseslint from "typescript-eslint";
+import pluginReact from "eslint-plugin-react";
+import hooks from "eslint-plugin-react-hooks";
+import refresh from "eslint-plugin-react-refresh";
 
-export default defineConfig([
-  globalIgnores(['dist']),
+export default tseslint.config(
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
+    ignores: ["dist", "node_modules", "jupyter-books", "public"],
+  },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    plugins: {
+      react: pluginReact,
+      "react-hooks": hooks,
+      "react-refresh": refresh,
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+    rules: {
+      ...pluginReact.configs.flat.recommended.rules,
+      ...pluginReact.configs.flat['jsx-runtime'].rules,
+      ...hooks.configs.recommended.rules,
+      "react-refresh/only-export-components": "warn",
+    },
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+      },
+      parser: tseslint.parser,
+      parserOptions: {
+        project: "tsconfig.app.json",
+      },
     },
   },
-])
+  {
+    files: ["src/components/ModelViewer.tsx"],
+    rules: {
+      "react/no-unknown-property": "off",
+    },
+  }
+);

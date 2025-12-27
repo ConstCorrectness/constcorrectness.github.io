@@ -2,22 +2,17 @@ version: 1
 project:
   id: 941772cd-3130-4f6e-91e9-09d342b38ce0
   title: ConstCorrectness Notes
-  description: Technical deep dives on C++, Rendering, and Math.
   github: https://github.com/constcorrectness/constcorrectness.github.io
 
 site:
   template: book-theme
-  # Using 'url' explicitly to satisfy the strict validator
   nav:
-    - title: Overview
-      url: intro
+    - file: intro  # This maps to intro.md
     
-    - title: C++ Engineering
-      children:
-        - title: The Philosophy of Const
-          url: const-correctness
-    
-    - title: Rendering & Math
-      children:
-        - title: 3D Projection Math
-          url: rendering-math
+    # We will use a flat list first to guarantee the build works.
+    # Once this passes, we can make it nested.
+    - file: const-correctness
+      title: C++ Engineering
+      
+    - file: rendering-math
+      title: Rendering & Math
