@@ -1,4 +1,3 @@
-# See docs at: https://mystmd.org/guide/frontmatter
 version: 1
 project:
   id: 941772cd-3130-4f6e-91e9-09d342b38ce0
@@ -8,15 +7,17 @@ project:
 
 site:
   template: book-theme
-  # This section defines your sidebar navigation
+  # Using 'url' explicitly to satisfy the strict validator
   nav:
-    - file: intro.md      # This is the "Home" of your book
-      title: Overview
+    - title: Overview
+      url: intro
     
     - title: C++ Engineering
       children:
-        - file: const-correctness.md
+        - title: The Philosophy of Const
+          url: const-correctness
     
     - title: Rendering & Math
       children:
-        - file: rendering-math.ipynb
+        - title: 3D Projection Math
+          url: rendering-math

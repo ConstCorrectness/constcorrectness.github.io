@@ -1,10 +1,8 @@
 import React from 'react';
-import { Container, Grid, Typography, Paper, Box, Button } from '@mui/material';
+import { Container, Typography, Paper, Box, Button, Grid } from '@mui/material'; // Standard Grid import
 import { Layout } from './components/Layout';
 import { ModelViewer } from './components/ModelViewer';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
-
 
 const App: React.FC = () => {
   return (
@@ -12,9 +10,10 @@ const App: React.FC = () => {
       {/* --- HERO SECTION --- */}
       <Box sx={{ bgcolor: '#1e1e1e', pt: 8, pb: 8, borderBottom: '1px solid #333' }}>
         <Container maxWidth="xl">
+          {/* Standard Grid requires 'container' on the parent */}
           <Grid container spacing={4} alignItems="center">
             
-            {/* Left: Text */}
+            {/* Standard Grid requires 'item' on the children */}
             <Grid item xs={12} md={6}>
               <Typography variant="overline" color="#61dafb" sx={{ letterSpacing: 2 }}>
                 Portfolio & Documentation
