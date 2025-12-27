@@ -1,35 +1,100 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { Container, Grid, Typography, Paper, Box, Button } from '@mui/material';
+import { Layout } from './components/Layout';
+import { ModelViewer } from './components/ModelViewer';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-function App() {
-  const [count, setCount] = useState(0)
 
+
+const App: React.FC = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Layout>
+      {/* --- HERO SECTION --- */}
+      <Box sx={{ bgcolor: '#1e1e1e', pt: 8, pb: 8, borderBottom: '1px solid #333' }}>
+        <Container maxWidth="xl">
+          <Grid container spacing={4} alignItems="center">
+            
+            {/* Left: Text */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="overline" color="#61dafb" sx={{ letterSpacing: 2 }}>
+                Portfolio & Documentation
+              </Typography>
+              <Typography variant="h2" component="h1" sx={{ fontWeight: 800, mb: 2 }}>
+                Rendering Reality.
+              </Typography>
+              <Typography variant="h6" color="gray" sx={{ mb: 4, lineHeight: 1.6 }}>
+                Welcome to my digital workspace. I write about high-performance C++, 
+                const correctness, and interactive 3D web experiences.
+              </Typography>
+              <Button 
+                variant="contained" 
+                size="large" 
+                endIcon={<ArrowForwardIcon />}
+                href="/notes/index.html"
+                sx={{ bgcolor: '#61dafb', color: '#000', fontWeight: 'bold' }}
+              >
+                Read the Notes
+              </Button>
+            </Grid>
+
+            {/* Right: 3D Viewer */}
+            <Grid item xs={12} md={6}>
+              <Paper 
+                elevation={3} 
+                sx={{ 
+                  height: 400, 
+                  bgcolor: '#121212', 
+                  borderRadius: 4, 
+                  overflow: 'hidden',
+                  border: '1px solid #333'
+                }}
+              >
+                <ModelViewer modelUrl="/models/HorribleRoom.glb" />
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* --- DASHBOARD / LATEST UPDATES --- */}
+      <Container maxWidth="lg" sx={{ mt: 6, mb: 6 }}>
+        <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
+          Latest Dashboard
+        </Typography>
+        <Grid container spacing={3}>
+          {/* Card 1 */}
+          <Grid item xs={12} md={4}>
+            <Paper sx={{ p: 3, bgcolor: '#252525', color: 'white' }}>
+              <Typography variant="h6" gutterBottom color="#61dafb">Project Alpha</Typography>
+              <Typography variant="body2" color="gray">
+                Implementing a custom rendering engine using Vulkan and C++.
+              </Typography>
+            </Paper>
+          </Grid>
+          
+          {/* Card 2 */}
+          <Grid item xs={12} md={4}>
+            <Paper sx={{ p: 3, bgcolor: '#252525', color: 'white' }}>
+              <Typography variant="h6" gutterBottom color="#61dafb">Jupyter Integration</Typography>
+              <Typography variant="body2" color="gray">
+                Automating CI/CD pipelines to convert Python notebooks into static HTML.
+              </Typography>
+            </Paper>
+          </Grid>
+
+          {/* Card 3 */}
+          <Grid item xs={12} md={4}>
+            <Paper sx={{ p: 3, bgcolor: '#252525', color: 'white' }}>
+              <Typography variant="h6" gutterBottom color="#61dafb">Asset Pipeline</Typography>
+              <Typography variant="body2" color="gray">
+                Optimizing GLTF files for faster loading on React clients.
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </Layout>
+  );
 }
 
-export default App
+export default App;

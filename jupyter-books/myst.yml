@@ -2,14 +2,21 @@
 version: 1
 project:
   id: 941772cd-3130-4f6e-91e9-09d342b38ce0
-  # title:
-  # description:
-  # keywords: []
-  # authors: []
-  github: https://github.com/ConstCorrectness/constcorrectness.github.io
-  # To autogenerate a Table of Contents, run "jupyter book init --write-toc"
+  title: ConstCorrectness Notes
+  description: Technical deep dives on C++, Rendering, and Math.
+  github: https://github.com/constcorrectness/constcorrectness.github.io
+
 site:
   template: book-theme
-  # options:
-  #   favicon: favicon.ico
-  #   logo: site_logo.png
+  # This section defines your sidebar navigation
+  nav:
+    - file: intro.md      # This is the "Home" of your book
+      title: Overview
+    
+    - title: C++ Engineering
+      children:
+        - file: const-correctness.md
+    
+    - title: Rendering & Math
+      children:
+        - file: rendering-math.ipynb
