@@ -1,73 +1,61 @@
-# React + TypeScript + Vite
+# `const-correctness.github.io`
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![Deploy to GitHub Pages](https://github.com/constcorrectness/constcorrectness.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/constcorrectness/constcorrectness.github.io/actions/workflows/deploy.yml)
 
-Currently, two official plugins are available:
+Welcome to the official repository for my personal website and blog, hosted on GitHub Pages. This project combines technical articles with interactive 3D elements.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**[Visit the live site!](https://constcorrectness.github.io/)**
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Features
 
-## Expanding the ESLint configuration
+*   **Interactive 3D Scene**: A 3D model of a room, rendered using `three.js` and `react-three-fiber`.
+*   **Technical Blog**: In-depth articles on programming concepts, starting with "const correctness," managed and built with Jupyter Book.
+*   **Modern Frontend**: Built with React, TypeScript, and Vite for a fast and responsive user experience.
+*   **Automated Deployment**: Continuous deployment to GitHub Pages using GitHub Actions.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+*   **Frontend**: [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
+*   **3D Rendering**: [Three.js](https://threejs.org/), [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
+*   **Blogging**: [Jupyter Book](https://jupyterbook.org/)
+*   **Deployment**: [GitHub Actions](https://github.com/features/actions), [GitHub Pages](https://pages.github.com/)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🚀 Running Locally
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+To run this project on your local machine, follow these steps:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/constcorrectness/constcorrectness.github.io.git
+    cd constcorrectness.github.io
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2.  **Install dependencies:**
+    This project uses `npm` for package management.
+    ```bash
+    npm install
+    ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3.  **Run the development server:**
+    This will start the Vite development server.
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:5173`.
+
+4.  **Build the Jupyter Book:**
+    To build the Jupyter Book content and make it available to the Vite application, run:
+    ```bash
+    npm run build:book
+    npm run copy:book
+    ```
+
+## 部署
+
+This site is automatically deployed to GitHub Pages whenever a commit is pushed to the `main` branch. The workflow is defined in `.github/workflows/deploy.yml`.
+
+---
+
+*This README was generated by Gemini.*
