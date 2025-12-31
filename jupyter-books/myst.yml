@@ -6,13 +6,12 @@ project:
 
 site:
   template: book-theme
+  options:
+    url: /notes/
   nav:
-    - file: intro  # This maps to intro.md
-    
-    # We will use a flat list first to guarantee the build works.
-    # Once this passes, we can make it nested.
-    - file: const-correctness
-      title: C++ Engineering
-      
-    - file: rendering-math
-      title: Rendering & Math
+    - title: Introduction
+      url: /notes/intro.html
+    - title: C++ Engineering
+      url: /notes/const-correctness.html
+    - title: Rendering & Math
+      url: /notes/rendering-math.html

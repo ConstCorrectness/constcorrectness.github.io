@@ -37,11 +37,11 @@ export const ModelViewer: React.FC<ViewerProps> = ({ modelUrl }) => {
     <Canvas shadows dpr={[1, 2]} camera={{ fov: 50 }}>
       <Suspense fallback={<Html center>Loading...</Html>}>
         {/* Stage sets up generic "nice" lighting and centering automatically */}
-        <Stage environment="city" intensity={0.6}>
+        <Stage environment="city" intensity={2.0}>
           {modelUrl ? <GltfModel url={modelUrl} /> : <SpinningBox />}
         </Stage>
       </Suspense>
-      <OrbitControls autoRotate />
+      <OrbitControls autoRotateSpeed={0.5} autoRotate />
     </Canvas>
   );
 };
