@@ -18,6 +18,11 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v1
+        with:
+          uv-version: '0.2.10'
+
       - name: Install dependencies
         run: npm install
 
