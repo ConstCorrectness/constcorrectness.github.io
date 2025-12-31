@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "build:book": "cd jupyter-books && uv run jupyter-book build",
-    "copy:book": "shx mkdir -p public/notes && shx cp -r jupyter-books/_build/html/* public/notes/"
+    "copy:book": "shx mkdir -p public/notes && shx cp -r jupyter-books/_build/site/* public/notes/"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

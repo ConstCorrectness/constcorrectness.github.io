@@ -29,9 +29,6 @@ jobs:
       - name: Build Jupyter Book
         run: npm run build:book
 
-      - name: List files in jupyter-books
-        run: ls -R jupyter-books
-
       - name: Copy Jupyter Book to public
         run: npm run copy:book
 
