@@ -40,7 +40,7 @@ const NoteView: React.FC = () => {
             '& h1': { fontSize: '2.5rem', fontWeight: 800, mb: 3, color: '#61dafb' },
             '& h2': { fontSize: '1.75rem', fontWeight: 700, mt: 4, mb: 2, borderBottom: '1px solid #333', pb: 1 },
             '& p': { fontSize: '1.1rem', lineHeight: 1.7, mb: 2, color: '#e0e0e0' },
-            '& code': { bgcolor: '#333', p: '2px 6px', borderRadius: '4px', fontSize: '0.9em' }
+            '& code': { fontSize: '0.9em' }
         }}>
           <Suspense fallback={<div>Loading note...</div>}>
             <NoteContent />
