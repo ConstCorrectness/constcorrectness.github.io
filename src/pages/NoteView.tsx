@@ -12,19 +12,21 @@ const modules = import.meta.glob('../content/notes/*.mdx');
 const NoteView: React.FC = () => {
   const { slug } = useParams();
   
-  const path = `../content/notes/${slug}.mdx`;
-  const loader = modules[path];
+  // Robustly find the module that matches the slug
+  const moduleEntry = Object.entries(modules).find(([path]) => path.endsWith(`/${slug}.mdx`));
+  const loader = moduleEntry?.[1];
 
   if (!loader) {
     return (
         <Container sx={{ mt: 10 }}>
             <Typography variant="h4">Note not found</Typography>
+            <Typography color="gray" sx={{ mt: 1 }}>Debug: looked for {slug}.mdx</Typography>
             <Button component={Link} to="/notes" sx={{ mt: 2 }}>Back to Notes</Button>
         </Container>
     );
   }
 
-  const NoteContent = React.useMemo(() => React.lazy(loader as any), [path]);
+  const NoteContent = React.useMemo(() => React.lazy(loader as any), [loader]);
 
   return (
     <PythonProvider>
