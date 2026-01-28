@@ -23,19 +23,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v1
-        with:
-          uv-version: '0.2.10'
-
       - name: Install dependencies
         run: npm install
-
-      - name: Build Jupyter Book
-        run: npm run build:book
-
-      - name: Copy Jupyter Book to public
-        run: npm run copy:book
 
       - name: Build Vite application
         run: npm run build

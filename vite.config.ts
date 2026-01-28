@@ -1,26 +1,22 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import mdx from '@mdx-js/rollup'
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import rehypeHighlight from 'rehype-highlight'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      '/myst_assets_folder': {
-        target: 'http://localhost:5173',
-        changeOrigin: true,
-        rewrite: (path) => `/notes${path}`,
-      },
-      '/favicon.ico': {
-        target: 'http://localhost:5173',
-        changeOrigin: true,
-        rewrite: (path) => `/notes${path}`,
-      },
-      '/myst-theme.css': {
-        target: 'http://localhost:5173',
-        changeOrigin: true,
-        rewrite: (path) => `/notes${path}`,
-      },
-    }
-  }
+  plugins: [
+    {
+      enforce: 'pre',
+      ...mdx({
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeKatex, rehypeHighlight],
+        providerImportSource: "@mdx-js/react",
+      })
+    },
+    react()
+  ],
 })
