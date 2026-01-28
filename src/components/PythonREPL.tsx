@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { usePython } from 'react-py';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface PythonREPLProps {
   code: string;
@@ -21,7 +23,7 @@ export const PythonREPL: React.FC<PythonREPLProps> = ({ code: initialCode, packa
   }, [stderr]);
 
   return (
-    <Box sx={{ my: 4, border: '1px solid #444', borderRadius: 2, overflow: 'hidden' }}>
+    <Box sx={{ my: 4, border: '1px solid #444', borderRadius: 2, overflow: 'hidden', bgcolor: '#1e1e1e' }}>
       <Box sx={{ bgcolor: '#2d2d2d', p: 1, borderBottom: '1px solid #444', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="caption" sx={{ color: '#aaa', ml: 1 }}>Python 3 (WASM)</Typography>
         <Button 
@@ -35,18 +37,29 @@ export const PythonREPL: React.FC<PythonREPLProps> = ({ code: initialCode, packa
             }}
             disabled={isLoading || isRunning}
         >
-            Run
+            {isRunning ? 'Running...' : 'Run'}
         </Button>
       </Box>
-      <Box component="pre" sx={{ m: 0, p: 2, bgcolor: '#1e1e1e', overflowX: 'auto', fontSize: '0.9rem', fontFamily: 'monospace' }}>
-        <code>{initialCode}</code>
-      </Box>
+      
+      <SyntaxHighlighter 
+        language="python" 
+        style={atomDark}
+        customStyle={{ 
+            margin: 0, 
+            padding: '1.5rem', 
+            fontSize: '0.95rem',
+            backgroundColor: 'transparent'
+        }}
+      >
+        {initialCode.trim()}
+      </SyntaxHighlighter>
+
       {output.length > 0 && (
         <Box sx={{ p: 2, bgcolor: '#000', borderTop: '1px solid #444' }}>
             <Typography variant="overline" color="gray">Output:</Typography>
-            <pre style={{ margin: 0, whiteSpace: 'pre-wrap', color: '#4caf50' }}>
+            <Box component="pre" sx={{ m: 0, mt: 1, whiteSpace: 'pre-wrap', color: '#4caf50', fontFamily: 'monospace', fontSize: '0.9rem' }}>
                 {output.join('\n')}
-            </pre>
+            </Box>
         </Box>
       )}
     </Box>
