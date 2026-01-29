@@ -3,6 +3,7 @@ import { Container, Typography, Box, Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const notes = [
+  { slug: 'anatomy-of-multi-head-attention', title: 'The Anatomy of Multi-Head Attention' },
   { slug: 'rendering-math', title: '3D Projection Mathematics' },
   { slug: 'const-correctness', title: 'The Philosophy of Const Correctness' }
 ];

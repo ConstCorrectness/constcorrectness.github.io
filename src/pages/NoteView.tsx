@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Box, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { PythonProvider } from 'react-py';
 import 'katex/dist/katex.min.css'; // Import KaTeX styles
 import 'highlight.js/styles/github-dark.css'; // Import Highlight.js styles
 
@@ -27,29 +26,38 @@ const NoteView: React.FC = () => {
   }
 
   const NoteContent = React.useMemo(() => React.lazy(loader as any), [loader]);
+  const isAttentionPost = slug === 'anatomy-of-multi-head-attention';
 
   return (
-    <PythonProvider>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 10 }}>
-        <Button startIcon={<ArrowBackIcon />} component={Link} to="/notes" sx={{ mb: 4, color: 'gray' }}>
-          Back to list
-        </Button>
-        <Box sx={{ 
-            bgcolor: '#1e1e1e', 
-            p: 6, 
-            borderRadius: 2,
-            '& pre': { borderRadius: 2, p: 0, overflow: 'hidden' }, // Reset pre styles for syntax highlighter
-            '& h1': { fontSize: '2.5rem', fontWeight: 800, mb: 3, color: '#61dafb' },
-            '& h2': { fontSize: '1.75rem', fontWeight: 700, mt: 4, mb: 2, borderBottom: '1px solid #333', pb: 1 },
-            '& p': { fontSize: '1.1rem', lineHeight: 1.7, mb: 2, color: '#e0e0e0' },
-            '& code': { fontSize: '0.9em' }
-        }}>
-          <Suspense fallback={<div>Loading note...</div>}>
-            <NoteContent />
-          </Suspense>
+    <Container maxWidth={false} sx={{ mt: 4, mb: 10, px: { xs: 2, sm: 3, md: 4 } }}>
+      {isAttentionPost && (
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h3" sx={{ fontWeight: 800, color: '#e6eef7' }}>
+            Multi-Head Attention
+          </Typography>
+          <Typography variant="h6" sx={{ mt: 0.5, color: '#b0bccb' }}>
+            why <span>{'$8\\times 32 > 256$'}</span>
+          </Typography>
         </Box>
-      </Container>
-    </PythonProvider>
+      )}
+      <Button startIcon={<ArrowBackIcon />} component={Link} to="/notes" sx={{ mb: 4, color: 'gray' }}>
+        Back to list
+      </Button>
+      <Box sx={{ 
+          bgcolor: '#1e1e1e', 
+          p: 6, 
+          borderRadius: 2,
+          '& pre': { borderRadius: 2, p: 0, overflow: 'hidden' }, // Reset pre styles for syntax highlighter
+          '& h1': { fontSize: '2.5rem', fontWeight: 800, mb: 3, color: '#61dafb' },
+          '& h2': { fontSize: '1.75rem', fontWeight: 700, mt: 4, mb: 2, borderBottom: '1px solid #333', pb: 1 },
+          '& p': { fontSize: '1.1rem', lineHeight: 1.7, mb: 2, color: '#e0e0e0' },
+          '& code': { fontSize: '0.9em' }
+      }}>
+        <Suspense fallback={<div>Loading note...</div>}>
+          <NoteContent />
+        </Suspense>
+      </Box>
+    </Container>
   );
 };
 
