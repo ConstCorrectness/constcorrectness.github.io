@@ -1,52 +1,52 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, Box, Container } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import React from 'react';
+import { AppBar, Toolbar, Typography, Button, Box, Container, IconButton } from '@mui/material';
 import CodeIcon from '@mui/icons-material/Code';
+import { Link as RouterLink } from 'react-router-dom';
+import ThemeToggle from './ThemeToggle';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Dropdown State
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#121212', color: 'white' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary' }}>
       
       {/* --- HEADER --- */}
-      <AppBar position="static" sx={{ bgcolor: '#1e1e1e', borderBottom: '1px solid #333' }}>
+      <AppBar 
+        position="sticky" 
+        elevation={0} 
+        sx={{ 
+          bgcolor: 'background.paper', 
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          color: 'text.primary'
+        }}
+      >
         <Toolbar>
-          <CodeIcon sx={{ mr: 1, color: '#61dafb' }} />
-          <Typography variant="h6" sx={{ flexGrow: 1, fontFamily: 'monospace', fontWeight: 700 }}>
+          <CodeIcon sx={{ mr: 1, color: 'primary.main' }} />
+          <Typography 
+            variant="h6" 
+            component={RouterLink}
+            to="/"
+            sx={{ 
+              flexGrow: 1, 
+              fontFamily: 'monospace', 
+              fontWeight: 700,
+              textDecoration: 'none',
+              color: 'inherit'
+            }}
+          >
             const correctness;
           </Typography>
 
-          <Button color="inherit" href="/">Home</Button>
-          
-          {/* Blog Dropdown */}
-          <Button 
-            color="inherit" 
-            endIcon={<KeyboardArrowDownIcon />}
-            onClick={handleMenuClick}
-          >
-            Blog
-          </Button>
-          <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            {/* These link to your rendered Jupyter Book pages */}
-            <MenuItem onClick={handleClose} component="a" href="/notes/index.html">
-              Intro & Setup
-            </MenuItem>
-            <MenuItem onClick={handleClose} component="a" href="/notes/structure.html">
-              C++ Deep Dives
-            </MenuItem>
-          </Menu>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center' }}>
+            <Button component={RouterLink} to="/" color="inherit">Home</Button>
+            <Button component={RouterLink} to="/notes" color="inherit">Blog</Button>
+            <Button component="a" href="https://github.com/constcorrectness" target="_blank" color="inherit">GitHub</Button>
+            <ThemeToggle />
+          </Box>
 
-          <Button color="inherit" href="https://github.com/constcorrectness">GitHub</Button>
+          {/* Mobile view could be added here later with a Drawer */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+             <ThemeToggle />
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -56,10 +56,24 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       </Box>
 
       {/* --- FOOTER --- */}
-      <Box component="footer" sx={{ py: 3, px: 2, mt: 'auto', backgroundColor: '#0a0a0a', textAlign: 'center' }}>
-        <Container maxWidth="sm">
-          <Typography variant="body2" color="#888">
+      <Box 
+        component="footer" 
+        sx={{ 
+          py: 6, 
+          px: 2, 
+          mt: 'auto', 
+          bgcolor: 'background.paper', 
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          textAlign: 'center' 
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography variant="body2" color="text.secondary">
             © {new Date().getFullYear()}  ConstCorrectness ™️
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            Built with React, MUI, and Three.js
           </Typography>
         </Container>
       </Box>

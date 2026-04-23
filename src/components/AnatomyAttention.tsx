@@ -826,7 +826,7 @@ const AnatomyAttention: React.FC = () => {
         <div className="w-full px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">The Mathematical Mechanism</h2>
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 font-mono text-sm md:text-base overflow-x-auto">
-            <p className="mb-4 text-gray-500">// The Scaled Dot-Product Attention</p>
+            <p className="mb-4 text-gray-500">{"// The Scaled Dot-Product Attention"}</p>
             <div className="flex justify-center items-center gap-4">
               <span>Attention(Q, K, V) = softmax</span>
               <div className="flex flex-col items-center px-2 border-l border-r border-gray-400">

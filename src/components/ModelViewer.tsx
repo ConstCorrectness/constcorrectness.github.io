@@ -1,12 +1,14 @@
 import React, { Suspense, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Stage, Html } from '@react-three/drei';
-
+import { useTheme } from '@mui/material';
 import * as THREE from 'three';
 
 
 function SpinningBox() {
   const meshRef = useRef<THREE.Mesh>(null);
+  const theme = useTheme();
+  
   useFrame((_, delta) => {
     if (meshRef.current) {
       meshRef.current.rotation.x += delta * 0.5;
@@ -17,7 +19,7 @@ function SpinningBox() {
   return (
     <mesh ref={meshRef}>
       <boxGeometry args={[2, 2, 2]} />
-      <meshStandardMaterial color="#61dafb" wireframe />
+      <meshStandardMaterial color={theme.palette.primary.main} wireframe />
     </mesh>
   );
 }
@@ -33,11 +35,15 @@ interface ViewerProps {
 }
 
 export const ModelViewer: React.FC<ViewerProps> = ({ modelUrl }) => {
+  const theme = useTheme();
+  
   return (
     <Canvas shadows dpr={[1, 2]} camera={{ fov: 50 }}>
       <Suspense fallback={<Html center>Loading...</Html>}>
-        {/* Stage sets up generic "nice" lighting and centering automatically */}
-        <Stage environment="city" intensity={2.0}>
+        <Stage 
+          environment={theme.palette.mode === 'dark' ? "city" : "apartment"} 
+          intensity={theme.palette.mode === 'dark' ? 1.0 : 0.5}
+        >
           {modelUrl ? <GltfModel url={modelUrl} /> : <SpinningBox />}
         </Stage>
       </Suspense>
@@ -45,4 +51,3 @@ export const ModelViewer: React.FC<ViewerProps> = ({ modelUrl }) => {
     </Canvas>
   );
 };
-
