@@ -1,11 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Paper, 
-  TextField, 
-  Chip, 
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  Chip,
   InputAdornment,
   Grid,
   Card,
@@ -15,7 +14,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
-import { notes, type Note } from '../data/notes';
+import { notes } from '../data/notes';
 
 const NotesList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,7 +89,7 @@ const NotesList: React.FC = () => {
       <Grid container spacing={4}>
         {filteredNotes.length > 0 ? (
           filteredNotes.map((note) => (
-            <Grid item xs={12} md={6} lg={4} key={note.slug}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={note.slug}>
               <Card 
                 elevation={0}
                 sx={{ 

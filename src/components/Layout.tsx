@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, Container, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';
 import CodeIcon from '@mui/icons-material/Code';
 import { Link as RouterLink } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';

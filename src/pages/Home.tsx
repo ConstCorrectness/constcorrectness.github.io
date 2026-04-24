@@ -112,7 +112,7 @@ const Home: React.FC = () => {
         
         <Grid container spacing={4}>
           {featuredNotes.map((note) => (
-            <Grid item xs={12} md={4} key={note.slug}>
+            <Grid size={{ xs: 12, md: 4 }} key={note.slug}>
               <Paper 
                 elevation={0}
                 component={Link}

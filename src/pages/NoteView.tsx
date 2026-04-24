@@ -1,13 +1,12 @@
 import React, { Suspense, useMemo } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
-import { 
-  Container, 
-  Box, 
-  Typography, 
-  Button, 
-  Divider, 
-  Chip, 
-  Fade,
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  Divider,
+  Chip,
   Stack,
   Skeleton
 } from '@mui/material';

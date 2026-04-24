@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  Link 
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  Link
 } from '@mui/material';
 
 interface Heading {
