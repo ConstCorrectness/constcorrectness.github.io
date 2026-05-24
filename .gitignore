@@ -42,3 +42,9 @@ public/notes/
 # --- OS Files ---
 .DS_Store
 Thumbs.db
+
+
+# --- Playwright MCP ---
+.playwright-mcp/
+
+

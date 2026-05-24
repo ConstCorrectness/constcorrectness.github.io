@@ -1,0 +1,110 @@
+import { PythonREPL } from '../../components/PythonREPL';
+import GridWorld from '../../components/GridWorld';
+
+# Deep Reinforcement Learning
+
+Reinforcement learning is the study of decision-making under uncertainty. An **agent** observes a **state** $s_t$, takes an **action** $a_t$, receives a **reward** $r_t$, and transitions to a new state $s_{t+1}$. The goal is to find a **policy** $\pi(a \mid s)$ that maximises expected cumulative reward.
+
+Unlike supervised learning, there is no labelled dataset — the agent must discover what works by trying things and observing the consequences.
+
+## The Bellman Equation
+
+The central object is the **action-value function** $Q^\pi(s, a)$: the expected return when starting in state $s$, taking action $a$, and following policy $\pi$ thereafter.
+
+The optimal $Q^*$ satisfies the Bellman optimality equation:
+
+$$
+Q^*(s, a) = \mathbb{E}\!\left[\, r + \gamma \max_{a'} Q^*(s', a') \;\middle|\; s, a \right]
+$$
+
+The discount factor $\gamma \in [0, 1)$ makes the agent prefer sooner rewards — an infinite horizon collapses to a finite sum. This equation is recursive: the value of taking action $a$ in state $s$ is the immediate reward plus the best possible discounted future value.
+
+## Q-Learning
+
+Q-learning (Watkins, 1989) is a model-free algorithm that directly approximates $Q^*$ using a table. After each transition $(s, a, r, s')$, it nudges the current estimate toward the Bellman target:
+
+$$
+Q(s, a) \;\leftarrow\; Q(s, a) + \alpha \underbrace{\Big[ r + \gamma \max_{a'} Q(s', a') - Q(s, a) \Big]}_{\text{TD error}}
+$$
+
+The bracketed term is the **temporal-difference (TD) error** — how wrong the current estimate is compared to a one-step lookahead. $\alpha$ is the learning rate.
+
+### Exploration vs. Exploitation
+
+A greedy policy always picks $\arg\max_a Q(s,a)$, but early in training the Q-table is noise. The standard fix is **$\varepsilon$-greedy**: with probability $\varepsilon$ choose a random action, otherwise act greedily. $\varepsilon$ decays over training as the estimates become trustworthy.
+
+## Training in Python
+
+Here is Q-learning from scratch on a 5×6 gridworld (same layout as the interactive demo below). The agent starts at `S`, must reach `G`, and walls block movement.
+
+<PythonREPL
+  packages={['numpy']}
+  code={`import numpy as np
+
+ROWS, COLS = 5, 6
+WALLS = {(1,2),(1,3),(3,1),(2,4)}
+START, GOAL = (4,0), (0,5)
+ACTIONS = [(-1,0),(1,0),(0,-1),(0,1)]
+ARROWS = ['↑','↓','←','→']
+
+Q = np.zeros((ROWS, COLS, 4))
+ALPHA, GAMMA = 0.15, 0.95
+EPISODES, MAX_STEPS = 1000, 100
+
+rewards = []
+for ep in range(EPISODES):
+    eps = 0.05 + 0.95 * np.exp(-6 * ep / EPISODES)
+    r, c = START
+    total = 0
+    for _ in range(MAX_STEPS):
+        a = np.random.randint(4) if np.random.random() < eps else np.argmax(Q[r,c])
+        dr, dc = ACTIONS[a]
+        nr, nc = r+dr, c+dc
+        if not (0<=nr<ROWS and 0<=nc<COLS) or (nr,nc) in WALLS:
+            nr, nc = r, c
+        done = (nr,nc) == GOAL
+        reward = 10.0 if done else -0.1
+        Q[r,c,a] += ALPHA*(reward + GAMMA*np.max(Q[nr,nc]) - Q[r,c,a])
+        total += reward
+        r, c = nr, nc
+        if done: break
+    rewards.append(total)
+
+print("Episode rewards (100-ep window avg):")
+for m in [100, 250, 500, 750, 1000]:
+    avg = np.mean(rewards[m-100:m])
+    bar = '█' * max(0, int((avg + 10) / 2))
+    print(f"  ep {m-99:4d}–{m:4d}: {avg:+6.2f}  {bar}")
+
+print("\\nLearned policy:")
+for r in range(ROWS):
+    row = ''
+    for c in range(COLS):
+        if   (r,c)==GOAL:  row += ' G '
+        elif (r,c) in WALLS: row += ' W '
+        elif (r,c)==START: row += ' S '
+        else:              row += f' {ARROWS[np.argmax(Q[r,c])]} '
+    print(row)`}
+/>
+
+You should see rewards climb from around $-10$ (random wandering) to near $+8$ (near-optimal path) as the policy converges.
+
+## Interactive Demo
+
+The component below runs the same algorithm in JavaScript. Hit **Train** to run 1000 episodes — policy arrows appear on the grid. Then hit **Play Episode** to watch the greedy policy navigate from S to G.
+
+<GridWorld />
+
+The orange arc of the reward curve is the training signal: noisy early (high $\varepsilon$, random exploration), then rising sharply as the Q-table bootstraps itself into a good policy.
+
+## From Tables to Networks
+
+Q-learning with a table works when the state space is small enough to enumerate. Real problems — Atari games, robot control — have states in the millions or continuous. The fix is the **Deep Q-Network (DQN)**: replace the table $Q(s, a)$ with a neural network $Q_\theta(s, a)$ parameterised by weights $\theta$.
+
+The same TD update applies, now via gradient descent:
+
+$$
+\mathcal{L}(\theta) = \mathbb{E}\!\left[\left( r + \gamma \max_{a'} Q_{\bar\theta}(s', a') - Q_\theta(s, a) \right)^{\!2}\right]
+$$
+
+The target network $Q_{\bar\theta}$ is a frozen copy of $Q_\theta$, updated periodically — this stabilises training by breaking the moving-target problem inherent in bootstrapped updates.

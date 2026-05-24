@@ -9,6 +9,14 @@ export interface Note {
 
 export const notes: Note[] = [
   {
+    slug: 'deep-reinforcement-learning',
+    title: 'Deep Reinforcement Learning',
+    date: '2026-05-24',
+    tags: ['AI', 'RL', 'Python', 'Math'],
+    category: 'AI',
+    excerpt: 'From the Bellman equation to Q-learning — with an interactive gridworld you can train in the browser.'
+  },
+  {
     slug: 'anatomy-of-multi-head-attention',
     title: 'The Anatomy of Multi-Head Attention',
     date: '2024-03-15',
