@@ -9,6 +9,14 @@ export interface Note {
 
 export const notes: Note[] = [
   {
+    slug: 'agent-patterns',
+    title: 'Agent Patterns (no more GoF 😢)',
+    date: '2026-06-27',
+    tags: ['AI', 'Agentic Programming', 'Python', 'Design Patterns', 'Software Engineering'],
+    category: 'AI',
+    excerpt: 'The Gang of Four (GoF) design patterns have been replaced....'
+  },
+  {
     slug: 'deep-reinforcement-learning',
     title: 'Deep Reinforcement Learning',
     date: '2026-05-24',

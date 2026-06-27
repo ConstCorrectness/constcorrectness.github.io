@@ -1,0 +1,865 @@
+import { PythonREPL } from '../../components/PythonREPL';
+
+# The Agent Shift: Static to Dynamic Patterns
+
+Traditional design patterns were built for software whose behavior is mostly known before it runs. The developer names the types, chooses the extension points, wires the dependencies, and decides which branch of logic handles each case. That model still matters, but AI agents push the center of gravity somewhere else: from static structure to dynamic evaluation.
+
+An agent is not just a function wrapped around a model call. It is a runtime system that repeatedly observes, remembers, reasons, acts, checks itself, coordinates with others, and stays inside explicit boundaries. Those cognitive functions do not replace classic software architecture. They change where the architecture has to be rigid and where it has to stay flexible.
+
+| Cognitive Function | Role in an Agent | Example Agent |
+| --- | --- | --- |
+| Perception | Observes inputs, environment state, events, and signals worth attending to. | Monitoring agent watching logs for anomalies. |
+| Memory | Stores, retrieves, and manages short-term context and long-term knowledge. | Customer support agent recalling account history. |
+| Reasoning | Interprets goals, decomposes problems, evaluates options, and selects strategies. | Planning agent breaking a project into tasks. |
+| Action | Executes tool calls, API requests, code changes, messages, or other external operations. | Coding agent editing files and running tests. |
+| Reflection | Reviews outcomes, detects errors, updates plans, and improves future behavior. | QA agent reviewing failed test output. |
+| Collaboration | Coordinates with humans, other agents, tools, and systems to complete shared work. | Research agent handing findings to a writing agent. |
+| Governance | Applies constraints, permissions, policies, audits, and safety controls. | Compliance agent checking actions against policy. |
+
+The core shift is this:
+
+| Classic Software | Agentic Software |
+| --- | --- |
+| Behavior is mostly selected by code written in advance. | Behavior is partly selected by runtime interpretation. |
+| State is usually explicit, durable, and addressable. | State is split between context, memory stores, and external systems. |
+| Inputs are validated and routed by deterministic branches. | Inputs are interpreted semantically before routing. |
+| Errors are handled by exceptions, retries, and fallbacks. | Errors also trigger reflection, replanning, and memory updates. |
+| Permissions are usually checked around APIs. | Permissions must also constrain reasoning and tool selection. |
+
+This is why GoF patterns are still useful language, but not always sufficient architecture. They describe static object relationships. Agents need patterns for cognitive flow.
+
+---
+
+## The Second Axis: Execution Topology
+
+The seven cognitive functions answer **what the agent does**. They do not answer **how the agent spends its work budget** to do it.
+
+That second question is the topology axis. A Chain-of-Thought is a linear chain. Fan-out/gather is parallel. Generator-critic is a loop. Complexity-based routing sends the same cognitive function down different execution paths depending on risk, ambiguity, latency, and cost.
+
+Read the framework through a budget lens:
+
+| Axis | Question | Budget Meaning |
+| --- | --- | --- |
+| Cognitive function | What is the agent spending effort on? | Perception, memory, reasoning, action, reflection, collaboration, or governance. |
+| Execution topology | How is that effort distributed? | Sequentially, conditionally, in parallel, or through feedback loops. |
+
+These are not separate categories. They are the two questions every allocation decision answers. If the cognitive axis names what the budget pays for, the topology axis names how that spending is distributed across processes.
+
+The topology vocabulary used below is intentionally small:
+
+| Topology | Shape | When It Fits |
+| --- | --- | --- |
+| Chain | One step feeds the next step. | The work has natural order and each step depends on the previous result. |
+| Route | A classifier, policy, or heuristic selects one path from several. | The system must vary depth, cost, model, tool, or control level by situation. |
+| Parallel | Multiple branches run independently before being gathered. | The system needs coverage, comparison, latency reduction, or independent evidence. |
+| Loop | Output is evaluated and fed back into another pass. | The system needs correction, critique, retry, refinement, or continuous monitoring. |
+
+Consider Argus, a pull-request review agent. When Argus reviews a complex pull request, it can use **Complexity-Based Routing**: reasoning x route topology. A simple rename routes to a quick check. A caching layer routes to deep analysis. The same cognitive function could also use **Chain-of-Thought Analysis** for step-by-step reasoning, or **Parallel Hypothesis Exploration** to evaluate several possible failure modes at once. The topology choice depends on reliability, latency, and cost constraints.
+
+---
+
+## The 27-Pattern Matrix
+
+The complete framework is a two-dimensional matrix: cognitive function on one axis, execution topology on the other. Not every combination deserves a named pattern. The matrix below names 27 useful cells and leaves one cell intentionally blank rather than stretching the vocabulary.
+
+| Cognitive Function | Chain Topology | Route Topology | Parallel Topology | Loop Topology |
+| --- | --- | --- | --- | --- |
+| Perception | Sequential Sensing | Attention Routing | Sensor Fusion | Perception Watch Loop |
+| Memory | Context Assembly Chain | Retrieval Routing | Multi-Index Recall | Memory Consolidation Loop |
+| Reasoning | Chain-of-Thought Analysis | Complexity-Based Routing | Parallel Hypothesis Exploration | Generator-Critic Reasoning |
+| Action | Tool Choreography | Capability Routing | Fan-Out Execution | Retry-and-Repair Action |
+| Reflection | Review Checklist Chain | Reflection Depth Routing | Independent Critic Panel | Self-Revision Loop |
+| Collaboration | Handoff Chain | Specialist Routing | Swarm Deliberation | Negotiation Loop |
+| Governance | Approval Chain | Policy Routing | Defense-in-Depth Checks | - |
+
+The blank cell is **governance x loop**. Systems certainly audit repeatedly, monitor continuously, and improve policy over time. But that is usually a meta-process around the agent system rather than a single agent execution pattern. In this matrix, governance appears at runtime as a chain, route, or parallel check. Continuous policy improvement belongs to operations and organizational control.
+
+### Pattern Glossary
+
+| Pattern | Cell | Meaning |
+| --- | --- | --- |
+| Sequential Sensing | Perception x chain | Gather observations in a fixed order, such as request, files, logs, then tests. |
+| Attention Routing | Perception x route | Send inputs to different perceivers based on source, severity, or modality. |
+| Sensor Fusion | Perception x parallel | Combine independent signals, such as logs, metrics, traces, and user reports. |
+| Perception Watch Loop | Perception x loop | Repeatedly observe an environment until a trigger, deadline, or stable state appears. |
+| Context Assembly Chain | Memory x chain | Build context step by step from recent conversation, retrieved facts, and tool output. |
+| Retrieval Routing | Memory x route | Choose between vector search, keyword search, database lookup, or file inspection. |
+| Multi-Index Recall | Memory x parallel | Query several memory stores at once and merge the evidence. |
+| Memory Consolidation Loop | Memory x loop | Summarize, deduplicate, decay, or promote memories after repeated use. |
+| Chain-of-Thought Analysis | Reasoning x chain | Decompose a problem into ordered intermediate judgments. |
+| Complexity-Based Routing | Reasoning x route | Select shallow, normal, or deep reasoning based on complexity and risk. |
+| Parallel Hypothesis Exploration | Reasoning x parallel | Explore several explanations, plans, or designs independently before choosing. |
+| Generator-Critic Reasoning | Reasoning x loop | Generate an answer, critique it, revise it, and stop when evidence is sufficient. |
+| Tool Choreography | Action x chain | Execute tools in a required sequence, such as inspect, edit, test, summarize. |
+| Capability Routing | Action x route | Choose the correct tool or API based on intent, schema, and permission. |
+| Fan-Out Execution | Action x parallel | Run independent actions concurrently, such as checking several files or services. |
+| Retry-and-Repair Action | Action x loop | Retry an action after interpreting its failure and adjusting arguments or plan. |
+| Review Checklist Chain | Reflection x chain | Evaluate output against ordered criteria before declaring completion. |
+| Reflection Depth Routing | Reflection x route | Choose a quick check, normal review, or deep audit based on risk and uncertainty. |
+| Independent Critic Panel | Reflection x parallel | Ask separate critics to evaluate correctness, safety, style, or completeness. |
+| Self-Revision Loop | Reflection x loop | Use critique to revise the output until the stopping condition is met. |
+| Handoff Chain | Collaboration x chain | Pass work through roles in order, such as researcher to builder to reviewer. |
+| Specialist Routing | Collaboration x route | Assign work to the best human, agent, service, or team for the task. |
+| Swarm Deliberation | Collaboration x parallel | Let multiple agents propose or evaluate options before aggregation. |
+| Negotiation Loop | Collaboration x loop | Iterate between actors until constraints, ownership, or output converge. |
+| Approval Chain | Governance x chain | Require ordered approvals before a sensitive operation proceeds. |
+| Policy Routing | Governance x route | Send actions through different policy paths based on data, risk, or environment. |
+| Defense-in-Depth Checks | Governance x parallel | Run independent guards, such as permission, privacy, safety, and budget checks. |
+
+---
+
+## How To Read The Matrix
+
+Start with the cognitive function, then choose the topology under the budget constraints.
+
+For example, "reasoning" by itself is not an architecture. It only says the system is spending budget on interpretation, planning, or judgment. The topology says how that reasoning budget is spent:
+
+- **Reasoning x chain:** spend tokens sequentially on step-by-step analysis.
+- **Reasoning x route:** spend little on easy cases and more on hard cases.
+- **Reasoning x parallel:** spend across multiple hypotheses and merge results.
+- **Reasoning x loop:** spend on generation, critique, and revision.
+
+The same reading applies to the other functions. "Memory" can be a context assembly chain, a retrieval router, a parallel recall system, or a consolidation loop. "Governance" can be an approval chain, policy router, or set of defense-in-depth checks.
+
+This turns pattern selection into an allocation question:
+
+| Constraint | Usually Pushes Toward |
+| --- | --- |
+| Low latency | Route topology or short chain. |
+| High reliability | Parallel topology or loop topology. |
+| Low cost | Route topology with cheap default paths. |
+| High ambiguity | Parallel exploration or generator-critic loop. |
+| High risk | Governance chain plus reflection depth routing. |
+| Large context | Memory routing and context assembly. |
+| Many actors | Collaboration routing or handoff chain. |
+
+The framework gives teams a shared vocabulary for evaluating agent architectures, the same way GoF gave teams a common language for object-oriented design, but extended to a new class of systems.
+
+---
+
+## Pattern Selection Card
+
+Use this card when designing or reviewing an agent workflow.
+
+| Question | Decision |
+| --- | --- |
+| What cognitive function is under pressure? | Perception, memory, reasoning, action, reflection, collaboration, or governance. |
+| What budget is scarce? | Tokens, time, money, tool calls, human attention, risk, or context window. |
+| What happens if this function is wrong? | Minor inconvenience, bad answer, failed task, data leak, production incident, or policy violation. |
+| Does the task have natural order? | Use a chain when each step depends on the previous result. |
+| Do cases vary sharply by difficulty or risk? | Use routing when easy and hard cases should not pay the same cost. |
+| Do independent views improve confidence or latency? | Use parallel topology when branches can run separately and be gathered. |
+| Is feedback necessary before completion? | Use a loop when the result must be critiqued, retried, refined, or stabilized. |
+| What is the stopping condition? | Define evidence, budget limit, confidence threshold, approval, or user confirmation. |
+| What must be logged? | Record the selected pattern, input, tool calls, policy decisions, evidence, and final status. |
+
+A compact version:
+
+| Situation | Recommended Pattern |
+| --- | --- |
+| Simple low-risk task | Direct chain or quick route. |
+| Unknown complexity | Complexity-Based Routing. |
+| Multiple plausible explanations | Parallel Hypothesis Exploration. |
+| Output quality matters more than latency | Generator-Critic Reasoning or Self-Revision Loop. |
+| Tool call may fail | Retry-and-Repair Action. |
+| Sensitive operation | Approval Chain plus Policy Routing. |
+| Many sources of truth | Sensor Fusion or Multi-Index Recall. |
+| Multi-role work | Handoff Chain or Specialist Routing. |
+
+---
+
+## Structural Pairs
+
+Three structural pairs run through the rest of the framework:
+
+| Pair | Architecture Reading |
+| --- | --- |
+| Perception <-> Governance | Perception is the entry gate. Governance is the exit gate. One controls what enters attention; the other controls what leaves as action. |
+| Memory <-> Collaboration | Memory is state across time. Collaboration is state across actors. Both decide where knowledge lives and how it moves. |
+| Reasoning <-> Reflection | Reasoning proposes. Reflection audits. Both spend judgment budget under the same latency, reliability, and cost constraints. |
+
+Each pair is one resource-allocation problem seen from opposite ends. Read this framework as paired chapters rather than seven independent modules, and the matrix stops being a taxonomy and becomes an architecture.
+
+---
+
+## A Minimal Agent Loop
+
+The simplest useful model is a loop:
+
+1. Perceive the current situation.
+2. Retrieve relevant memory.
+3. Reason about the next step.
+4. Act through a tool or message.
+5. Reflect on the result.
+6. Collaborate if the task exceeds one agent's scope.
+7. Enforce governance before sensitive actions.
+
+The loop below is intentionally small, but it shows the shape of the system. The model call is replaced with deterministic scoring so the example can run directly in the browser.
+
+<PythonREPL
+  code={`
+from dataclasses import dataclass, field
+
+@dataclass
+class Memory:
+    facts: list[str] = field(default_factory=list)
+
+    def retrieve(self, task):
+        terms = set(task.lower().split())
+        matches = []
+        for fact in self.facts:
+            if terms & set(fact.lower().split()):
+                matches.append(fact)
+        return matches[:3]
+
+    def store(self, fact):
+        if fact not in self.facts:
+            self.facts.append(fact)
+
+class Agent:
+    def __init__(self):
+        self.memory = Memory([
+            "deploy requires tests",
+            "billing changes require approval",
+            "docs should include examples",
+        ])
+
+    def perceive(self, task):
+        return {"task": task, "sensitive": "billing" in task.lower()}
+
+    def reason(self, observation, memories):
+        if observation["sensitive"]:
+            return "request_approval"
+        if "test" in " ".join(memories).lower():
+            return "run_tests"
+        return "draft_answer"
+
+    def govern(self, action, observation):
+        if observation["sensitive"] and action != "request_approval":
+            return False
+        return True
+
+    def act(self, action):
+        actions = {
+            "request_approval": "Asked a human reviewer for approval.",
+            "run_tests": "Ran the test suite before making changes.",
+            "draft_answer": "Drafted a response from available context.",
+        }
+        return actions[action]
+
+    def reflect(self, task, action, result):
+        self.memory.store("last task used action " + action)
+        return "Reflection: the agent chose " + action + " for " + task
+
+    def run(self, task):
+        observation = self.perceive(task)
+        memories = self.memory.retrieve(task)
+        action = self.reason(observation, memories)
+        if not self.govern(action, observation):
+            return "Blocked by governance."
+        result = self.act(action)
+        reflection = self.reflect(task, action, result)
+        return chr(10).join([
+            "Task: " + task,
+            "Relevant memory: " + str(memories),
+            "Action: " + action,
+            "Result: " + result,
+            reflection,
+        ])
+
+agent = Agent()
+print(agent.run("prepare deploy notes with tests"))
+print()
+print(agent.run("change billing plan for customer"))
+  `}
+/>
+
+---
+
+## 1. Singleton vs. Memory Architecture
+
+The classic Singleton assumes a stable, globally available object. That is useful when there really should be exactly one instance of something: an application configuration, a logger, a connection pool, or a process-wide registry.
+
+Agents need something more nuanced. Their working state is limited by the context window, and their durable state may live in vector stores, databases, files, tickets, browser sessions, or tool outputs. A memory architecture separates three concerns:
+
+| Memory Layer | Purpose | Failure Mode |
+| --- | --- | --- |
+| Working memory | The immediate context used for the next decision. | Context overflow or distraction. |
+| Episodic memory | Records of prior actions, outcomes, and user preferences. | Stale or overfit behavior. |
+| Semantic memory | General knowledge retrieved by meaning. | Irrelevant retrieval or missing context. |
+
+A robust agent does not simply keep everything. It decides what to retrieve, what to forget, and what to preserve.
+
+<PythonREPL
+  code={`
+from dataclasses import dataclass, field
+
+@dataclass
+class TieredMemory:
+    working_limit: int = 3
+    working: list[str] = field(default_factory=list)
+    episodic: list[str] = field(default_factory=list)
+    semantic: dict[str, str] = field(default_factory=dict)
+
+    def add_working(self, item):
+        self.working.append(item)
+        self.working = self.working[-self.working_limit:]
+
+    def remember_episode(self, event):
+        self.episodic.append(event)
+
+    def learn_fact(self, key, fact):
+        self.semantic[key] = fact
+
+    def retrieve(self, query):
+        query = query.lower()
+        facts = []
+        for key, fact in self.semantic.items():
+            if key in query or key in fact.lower():
+                facts.append(fact)
+        episodes = [event for event in self.episodic if query in event.lower()]
+        return {
+            "working": list(self.working),
+            "semantic": facts,
+            "episodic": episodes[-2:],
+        }
+
+memory = TieredMemory()
+memory.learn_fact("tests", "Run tests before deployment.")
+memory.learn_fact("approval", "Billing changes need human approval.")
+memory.add_working("User asked for deploy notes.")
+memory.add_working("Repo has a Python worker.")
+memory.add_working("Build uses Vite.")
+memory.add_working("Latest request mentions tests.")
+memory.remember_episode("deploy task succeeded after tests passed")
+
+print(memory.retrieve("tests"))
+  `}
+/>
+
+**Design consequence:** treat memory as an explicit subsystem, not as a side effect of a long prompt.
+
+---
+
+## 2. Factory vs. Semantic Routing
+
+The Factory pattern maps a known name to a known type. That is a good fit when callers already know what they want: `create_csv_exporter`, `new DatabaseClient`, `getPaymentProvider("stripe")`.
+
+Agents often receive intent rather than type names. The user says "summarize this PDF", "find why CI failed", or "make this page feel more polished." Semantic routing turns the request into a tool choice by comparing meaning, not exact strings.
+
+| Factory Assumption | Agentic Replacement |
+| --- | --- |
+| The caller knows the class or type name. | The caller describes an outcome. |
+| The valid options are enumerated in code. | The valid options may come from a tool registry. |
+| Routing is exact or branch-based. | Routing is similarity-based plus policy checks. |
+| Failure means unknown type. | Failure may mean ambiguous intent, missing permission, or insufficient context. |
+
+<PythonREPL
+  code={`
+TOOLS = {
+    "search": {"words": {"find", "look", "research", "source", "web"}},
+    "calculator": {"words": {"sum", "add", "multiply", "price", "total"}},
+    "editor": {"words": {"edit", "rewrite", "patch", "change", "file"}},
+    "tester": {"words": {"test", "verify", "build", "lint", "failure"}},
+}
+
+def route_intent(request):
+    request_words = set(request.lower().replace(".", "").split())
+    scored = []
+    for name, metadata in TOOLS.items():
+        score = len(request_words & metadata["words"])
+        scored.append((score, name))
+    scored.sort(reverse=True)
+    best_score, best_name = scored[0]
+    if best_score == 0:
+        return "ask_clarifying_question"
+    return best_name
+
+requests = [
+    "Find recent sources for this claim.",
+    "Patch the file and verify the build.",
+    "What is the total price after tax?",
+    "Make it better.",
+]
+
+for request in requests:
+    print(request, "->", route_intent(request))
+  `}
+/>
+
+**Design consequence:** routing should return a confidence level, not just a tool name. Low confidence is a valid result.
+
+---
+
+## 3. Observer vs. Active Perception
+
+Observer assumes events are delivered to listeners, and every listener gets the same event stream. That works well for UI events, pub/sub systems, and domain notifications.
+
+Agents have an attention budget. They may receive logs, tickets, files, chat messages, test output, calendar events, browser content, and tool results. Active perception means the agent filters, compresses, and prioritizes before reasoning.
+
+| Passive Observer | Active Perception |
+| --- | --- |
+| Receives every event. | Selects relevant events. |
+| Event delivery is the main problem. | Attention allocation is the main problem. |
+| The event payload is assumed usable. | The event may need summarization or normalization. |
+| Listeners are usually deterministic. | The perceiver may use heuristics or model judgment. |
+
+<PythonREPL
+  code={`
+events = [
+    {"source": "logs", "text": "200 OK /health", "severity": 1},
+    {"source": "logs", "text": "500 error on checkout", "severity": 5},
+    {"source": "chat", "text": "Can you fix the payment issue?", "severity": 4},
+    {"source": "metrics", "text": "CPU steady at 32 percent", "severity": 1},
+    {"source": "tests", "text": "billing_test.py failed", "severity": 5},
+]
+
+def relevance(event, goal):
+    score = event["severity"]
+    goal_words = set(goal.lower().split())
+    event_words = set(event["text"].lower().replace("?", "").split())
+    score += 2 * len(goal_words & event_words)
+    return score
+
+def perceive(events, goal, attention_limit=3):
+    ranked = sorted(
+        events,
+        key=lambda event: relevance(event, goal),
+        reverse=True,
+    )
+    return ranked[:attention_limit]
+
+for event in perceive(events, "fix billing payment checkout"):
+    print(event["source"], "-", event["text"])
+  `}
+/>
+
+**Design consequence:** perception needs tests too. Bad filtering can make a smart model act on the wrong facts.
+
+---
+
+## 4. Strategy vs. Reasoning
+
+Strategy lets code choose from interchangeable algorithms. The choice is usually made by a developer, configuration, dependency injection, or a simple runtime condition.
+
+Agents choose strategies by interpreting the task. A trivial question may need a direct answer. A risky operation may need a plan, validation, and approval. A broad research task may need decomposition. A coding task may need inspection, patching, and test execution.
+
+| Task Signal | Likely Reasoning Strategy |
+| --- | --- |
+| Low risk, low ambiguity | Direct response |
+| Many dependencies | Plan then execute |
+| External side effects | Governed action |
+| Conflicting evidence | Compare alternatives |
+| Failed result | Reflect and retry |
+
+<PythonREPL
+  code={`
+def classify_task(task):
+    text = task.lower()
+    score = 0
+    if any(word in text for word in ["deploy", "delete", "billing", "production"]):
+        score += 3
+    if any(word in text for word in ["why", "debug", "compare", "architecture"]):
+        score += 2
+    if len(text.split()) > 12:
+        score += 1
+    return score
+
+def select_strategy(task):
+    score = classify_task(task)
+    if score >= 3:
+        return "plan_validate_then_act"
+    if score >= 2:
+        return "decompose_and_reason"
+    return "direct_answer"
+
+tasks = [
+    "What does this function do?",
+    "Debug why checkout fails after the billing change.",
+    "Deploy the production migration after tests pass.",
+]
+
+for task in tasks:
+    print(task)
+    print("strategy:", select_strategy(task))
+    print()
+  `}
+/>
+
+**Design consequence:** reasoning policy should be visible. Hidden strategy selection makes agents hard to debug.
+
+---
+
+## 5. Command vs. Tool-Using Action
+
+The Command pattern packages a request as an object. It gives software a clean way to queue, undo, retry, log, or compose operations.
+
+Agent actions need the same discipline, but with additional constraints. A model may propose an action in natural language. The runtime has to convert that proposal into a structured tool call, validate arguments, enforce permissions, execute, and return observations.
+
+| Command Pattern | Agent Action Pattern |
+| --- | --- |
+| Command object has known fields. | Tool call schema constrains arguments. |
+| Invoker executes command. | Agent runtime executes approved tool calls. |
+| Undo may be defined by the command. | Rollback may require human approval or compensating action. |
+| Logging is useful. | Audit trails are mandatory for high-impact tools. |
+
+<PythonREPL
+  code={`
+ALLOWED_TOOLS = {
+    "read_file": {"risk": 1},
+    "run_tests": {"risk": 2},
+    "send_email": {"risk": 4},
+    "delete_database": {"risk": 10},
+}
+
+def validate_action(action):
+    tool = action.get("tool")
+    if tool not in ALLOWED_TOOLS:
+        return False, "unknown tool"
+    if ALLOWED_TOOLS[tool]["risk"] >= 4 and not action.get("approved"):
+        return False, "approval required"
+    return True, "ok"
+
+def execute(action):
+    valid, reason = validate_action(action)
+    if not valid:
+        return "blocked: " + reason
+    return "executed " + action["tool"] + " with " + str(action.get("args", {}))
+
+actions = [
+    {"tool": "read_file", "args": {"path": "README.md"}},
+    {"tool": "send_email", "args": {"to": "user@example.com"}},
+    {"tool": "send_email", "approved": True, "args": {"to": "user@example.com"}},
+]
+
+for action in actions:
+    print(execute(action))
+  `}
+/>
+
+**Design consequence:** never let natural language be the final action boundary. Convert it into typed, validated operations.
+
+---
+
+## 6. Template Method vs. Reflection
+
+Template Method defines a fixed algorithm skeleton and lets subclasses fill in steps. Reflection in agent systems is different: the skeleton may remain, but the agent evaluates whether the previous step worked and adjusts the next one.
+
+Reflection is not just "think again." It is a feedback mechanism.
+
+| Reflection Question | Useful Output |
+| --- | --- |
+| Did the action achieve the goal? | Continue, stop, or retry. |
+| What evidence supports success? | Test result, user confirmation, diff, metric, log. |
+| What changed in the environment? | New files, new failures, new constraints. |
+| What should be remembered? | Durable preference, failure pattern, successful procedure. |
+
+<PythonREPL
+  code={`
+def reflect(goal, result):
+    result_text = result.lower()
+    if "failed" in result_text or "error" in result_text:
+        return {
+            "status": "retry",
+            "lesson": "Inspect the failure before trying another change.",
+            "next_step": "diagnose",
+        }
+    if "passed" in result_text or "success" in result_text:
+        return {
+            "status": "done",
+            "lesson": "The chosen approach satisfied the check.",
+            "next_step": "summarize",
+        }
+    return {
+        "status": "uncertain",
+        "lesson": "The result did not include strong evidence.",
+        "next_step": "collect_more_evidence",
+    }
+
+checks = [
+    "tests passed in 12.4 seconds",
+    "build failed with import error",
+    "command completed",
+]
+
+for check in checks:
+    print(check)
+    print(reflect("ship a safe change", check))
+    print()
+  `}
+/>
+
+**Design consequence:** reflection should update the plan or memory. If it only produces prose, it is probably decorative.
+
+---
+
+## 7. Chain of Responsibility vs. Collaboration
+
+Chain of Responsibility passes a request through handlers until one accepts it. That maps partly onto agents, but collaboration is richer. A task may require several agents or tools to contribute partial work: one gathers evidence, one writes code, one reviews security, one summarizes for the user.
+
+Good collaboration needs contracts:
+
+| Contract | Why It Matters |
+| --- | --- |
+| Role | Prevents duplicate work and unclear ownership. |
+| Input | Makes handoffs inspectable. |
+| Output | Keeps downstream agents from guessing. |
+| Authority | Defines what each agent may decide or execute. |
+| Escalation | Gives the system a path when confidence is low. |
+
+<PythonREPL
+  code={`
+class Specialist:
+    def __init__(self, name, skills):
+        self.name = name
+        self.skills = set(skills)
+
+    def can_handle(self, task):
+        words = set(task.lower().split())
+        return len(words & self.skills)
+
+    def handle(self, task):
+        return self.name + " handled: " + task
+
+team = [
+    Specialist("ResearchAgent", ["source", "find", "evidence", "compare"]),
+    Specialist("CodingAgent", ["code", "fix", "test", "file"]),
+    Specialist("ReviewAgent", ["risk", "security", "policy", "review"]),
+]
+
+def delegate(task):
+    ranked = sorted(team, key=lambda agent: agent.can_handle(task), reverse=True)
+    best = ranked[0]
+    if best.can_handle(task) == 0:
+        return "No specialist matched. Ask the user to clarify."
+    return best.handle(task)
+
+tasks = [
+    "find evidence for the claim",
+    "fix test failure in file",
+    "review security risk",
+    "make it nicer",
+]
+
+for task in tasks:
+    print(delegate(task))
+  `}
+/>
+
+**Design consequence:** multi-agent systems fail when handoffs are vague. The interface between agents matters more than the number of agents.
+
+---
+
+## 8. Proxy, Decorator, and Governance
+
+Governance is the control plane around the agent. Classic patterns like Proxy and Decorator are useful here because they wrap access to sensitive operations. The difference is that agent governance must constrain both execution and decision-making.
+
+Governance includes:
+
+- Tool permissions.
+- Data access boundaries.
+- Human approval requirements.
+- Rate limits and cost limits.
+- Audit logs.
+- Prompt and output safety checks.
+- Environment-specific rules such as "read-only in production."
+
+| Governance Layer | Example Rule |
+| --- | --- |
+| Identity | This agent can read tickets but cannot close them. |
+| Intent | Destructive requests require explicit confirmation. |
+| Tool | Shell commands run in a sandbox by default. |
+| Data | Customer data cannot be sent to external tools. |
+| Output | Legal, medical, or financial answers include uncertainty and boundaries. |
+| Audit | Every high-impact action records who, what, when, and why. |
+
+<PythonREPL
+  code={`
+class GovernedTool:
+    def __init__(self, name, risk, func):
+        self.name = name
+        self.risk = risk
+        self.func = func
+        self.audit_log = []
+
+    def call(self, user, approved=False, **kwargs):
+        if self.risk >= 5 and not approved:
+            decision = "blocked"
+            reason = "approval required"
+        else:
+            decision = "allowed"
+            reason = self.func(**kwargs)
+
+        self.audit_log.append({
+            "user": user,
+            "tool": self.name,
+            "decision": decision,
+            "reason": reason,
+        })
+        return decision + ": " + reason
+
+def deploy(environment):
+    return "deployed to " + environment
+
+deploy_tool = GovernedTool("deploy", risk=7, func=deploy)
+
+print(deploy_tool.call("agent-1", environment="production"))
+print(deploy_tool.call("agent-1", approved=True, environment="staging"))
+print(deploy_tool.audit_log)
+  `}
+/>
+
+**Design consequence:** governance is not a final checklist. It is part of the runtime path for every meaningful action.
+
+---
+
+## Pattern Mapping Cheat Sheet
+
+| GoF Pattern | Traditional Purpose | Agentic Counterpart | What Changes |
+| --- | --- | --- | --- |
+| Singleton | One shared instance | Tiered memory | Global state becomes selective context. |
+| Factory | Create known types | Semantic routing | Exact type names become interpreted intent. |
+| Observer | Broadcast events | Active perception | Delivery becomes attention management. |
+| Strategy | Swap algorithms | Reasoning strategy | Humans stop choosing every path manually. |
+| Command | Encapsulate operations | Tool calls | Actions need schemas, validation, and audit. |
+| Template Method | Fixed algorithm skeleton | Reflective loop | Steps adapt based on evidence. |
+| Chain of Responsibility | Pass request among handlers | Agent collaboration | Handoffs need roles, contracts, and confidence. |
+| Proxy | Control access | Governance wrapper | Permission checks surround tools and reasoning. |
+| Decorator | Add behavior around objects | Runtime guardrails | Policies wrap model output, tool calls, and memory. |
+| Memento | Capture state snapshots | Episodic memory | Snapshots become recoverable experience. |
+
+---
+
+## Practical Architecture
+
+A production agent tends to separate into these modules:
+
+| Module | Responsibility |
+| --- | --- |
+| Interface | Receives user input and renders responses. |
+| Context builder | Selects system instructions, recent messages, files, and retrieved memory. |
+| Perception layer | Normalizes events, files, logs, and tool output. |
+| Memory layer | Stores durable facts, episodes, preferences, and embeddings. |
+| Planner | Chooses the next step or decomposes the task. |
+| Tool runtime | Validates and executes structured actions. |
+| Reflection loop | Evaluates outcomes and updates the plan. |
+| Governance layer | Enforces policy before and after sensitive operations. |
+| Observability | Records traces, decisions, tool calls, failures, and cost. |
+
+This shape keeps the model powerful but bounded. The LLM can interpret ambiguous goals, but the surrounding system decides what context it sees, which tools it can call, how actions are validated, and what evidence counts as success.
+
+---
+
+## Failure Modes
+
+Agentic architecture introduces new failure modes that classic patterns do not fully cover.
+
+| Failure Mode | Cause | Mitigation |
+| --- | --- | --- |
+| Context flooding | Too much irrelevant information enters the prompt. | Perception filters and retrieval limits. |
+| Stale memory | Old facts are retrieved as if they are still true. | Timestamps, confidence, and invalidation. |
+| Tool misuse | The agent picks the wrong tool or bad arguments. | Typed schemas, dry runs, and validation. |
+| Over-reflection | The agent loops instead of finishing. | Step budgets and explicit stopping criteria. |
+| Hidden collaboration failure | Agents pass vague summaries to each other. | Handoff contracts and structured outputs. |
+| Policy bypass | Sensitive work is framed as harmless. | Intent checks plus tool-level enforcement. |
+| Unverifiable success | The agent reports completion without evidence. | Tests, logs, diffs, metrics, and user confirmation. |
+
+The most important practical rule: every agent action should produce evidence. "I did it" is weaker than a passing test, a diff, a log line, or a returned identifier from an external system.
+
+---
+
+## A More Complete Toy Runtime
+
+The following example combines routing, governance, tool execution, and reflection into one small runtime. It is still a toy, but it demonstrates the architectural boundary: reasoning proposes actions; the runtime approves, executes, and records them.
+
+<PythonREPL
+  code={`
+class Runtime:
+    def __init__(self):
+        self.audit = []
+        self.memory = []
+
+    def route(self, task):
+        text = task.lower()
+        if "test" in text or "verify" in text:
+            return {"tool": "run_tests", "risk": 2}
+        if "deploy" in text:
+            return {"tool": "deploy", "risk": 7}
+        if "summarize" in text or "explain" in text:
+            return {"tool": "write_response", "risk": 1}
+        return {"tool": "ask_clarifying_question", "risk": 0}
+
+    def approve(self, action, approved=False):
+        if action["risk"] >= 5 and not approved:
+            return False
+        return True
+
+    def execute(self, action):
+        tool = action["tool"]
+        if tool == "run_tests":
+            return "tests passed"
+        if tool == "deploy":
+            return "deployment started"
+        if tool == "write_response":
+            return "summary written"
+        return "asked user for clarification"
+
+    def reflect(self, task, action, result):
+        if "passed" in result or "written" in result:
+            status = "success"
+        elif "asked" in result:
+            status = "waiting"
+        else:
+            status = "needs_followup"
+        self.memory.append("task=" + task + "; status=" + status)
+        return status
+
+    def run(self, task, approved=False):
+        action = self.route(task)
+        if not self.approve(action, approved):
+            result = "blocked by governance"
+            status = "blocked"
+        else:
+            result = self.execute(action)
+            status = self.reflect(task, action, result)
+
+        record = {
+            "task": task,
+            "tool": action["tool"],
+            "result": result,
+            "status": status,
+        }
+        self.audit.append(record)
+        return record
+
+runtime = Runtime()
+print(runtime.run("verify the change with tests"))
+print(runtime.run("deploy to production"))
+print(runtime.run("deploy to staging", approved=True))
+print()
+print("audit:")
+for item in runtime.audit:
+    print(item)
+print()
+print("memory:", runtime.memory)
+  `}
+/>
+
+---
+
+## Takeaways
+
+Agentic systems do not make classic design patterns obsolete. They move many decisions from compile time to runtime, which means the architecture has to support interpretation, evidence, and control.
+
+The durable lessons are:
+
+- Memory is not a Singleton. It is a managed retrieval system.
+- Routing is not just a Factory. It is intent interpretation plus confidence.
+- Perception is not just Observer. It is attention management.
+- Reasoning is not just Strategy. It is dynamic selection of cognitive effort.
+- Action is not just Command. It is structured tool execution under policy.
+- Reflection is not just retry logic. It is evidence-based adaptation.
+- Collaboration is not just delegation. It is contracted handoff.
+- Governance is not an afterthought. It is the control plane of the agent.
+
+The architecture that works best is not the one that gives the model the most freedom. It is the one that gives the model the right freedom inside a system that can observe, constrain, verify, and learn.
