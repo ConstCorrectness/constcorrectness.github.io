@@ -28,6 +28,67 @@ const components = {
   p: (props: any) => <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }} {...props} />,
   li: (props: any) => <Typography component="li" variant="body1" sx={{ mb: 1, color: 'text.secondary' }} {...props} />,
   a: (props: any) => <Typography component="a" variant="body1" color="primary" sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }} {...props} />,
+  table: (props: any) => (
+    <Box
+      sx={{
+        my: 4,
+        overflowX: 'auto',
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+        bgcolor: 'background.paper'
+      }}
+    >
+      <Box
+        component="table"
+        sx={{
+          width: '100%',
+          minWidth: 640,
+          borderCollapse: 'collapse'
+        }}
+        {...props}
+      />
+    </Box>
+  ),
+  thead: (props: any) => (
+    <Box
+      component="thead"
+      sx={{
+        bgcolor: 'action.hover'
+      }}
+      {...props}
+    />
+  ),
+  th: (props: any) => (
+    <Box
+      component="th"
+      sx={{
+        px: 2,
+        py: 1.5,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        color: 'text.primary',
+        fontWeight: 700,
+        textAlign: 'left',
+        verticalAlign: 'top'
+      }}
+      {...props}
+    />
+  ),
+  td: (props: any) => (
+    <Box
+      component="td"
+      sx={{
+        px: 2,
+        py: 1.25,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        color: 'text.secondary',
+        verticalAlign: 'top'
+      }}
+      {...props}
+    />
+  ),
   blockquote: (props: any) => (
     <Box 
       component="blockquote" 
