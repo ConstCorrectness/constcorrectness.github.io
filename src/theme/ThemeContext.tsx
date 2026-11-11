@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import getTheme from './theme';
-import { ThemeContext, type ThemeMode } from './ThemeContextDefinition';
+import getTheme from './theme.js';
+import { ThemeContext, type ThemeMode } from './ThemeContextDefinition.js';
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [mode, setMode] = useState<ThemeMode>(() => {
     const savedMode = localStorage.getItem('themeMode');
     return (savedMode as ThemeMode) || 'dark';

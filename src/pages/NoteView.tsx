@@ -12,23 +12,29 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { MDXProvider } from '@mdx-js/react';
+import type { MDXComponents } from 'mdx/types';
 import 'katex/dist/katex.min.css';
-import ReadingProgressBar from '../components/ReadingProgressBar';
-import TableOfContents from '../components/TableOfContents';
-import GiscusComments from '../components/GiscusComments';
-import { notes as notesData } from '../data/notes';
+import ReadingProgressBar from '../components/ReadingProgressBar.js';
+import TableOfContents from '../components/TableOfContents.js';
+import GiscusComments from '../components/GiscusComments.js';
+import { notes as notesData } from '../data/notes.js';
+import type { Note } from '../data/notes.js';
 
 // Define the glob for MDX files
 const modules = import.meta.glob('../content/notes/*.mdx');
 
-const components = {
-  h1: (props: any) => <Typography variant="h3" component="h1" gutterBottom sx={{ mt: 6, fontWeight: 800 }} {...props} />,
-  h2: (props: any) => <Typography variant="h4" component="h2" gutterBottom sx={{ mt: 5, mb: 2, fontWeight: 700 }} {...props} />,
-  h3: (props: any) => <Typography variant="h5" component="h3" gutterBottom sx={{ mt: 4, mb: 2, fontWeight: 600 }} {...props} />,
-  p: (props: any) => <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }} {...props} />,
-  li: (props: any) => <Typography component="li" variant="body1" sx={{ mb: 1, color: 'text.secondary' }} {...props} />,
-  a: (props: any) => <Typography component="a" variant="body1" color="primary" sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }} {...props} />,
-  table: (props: any) => (
+type MDXModule = {
+  default: React.ComponentType<any>;
+};
+
+const components: MDXComponents = {
+  h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Typography variant="h3" component="h1" gutterBottom sx={{ mt: 6, fontWeight: 800 }} {...props} />,
+  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Typography variant="h4" component="h2" gutterBottom sx={{ mt: 5, mb: 2, fontWeight: 700 }} {...props} />,
+  h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => <Typography variant="h5" component="h3" gutterBottom sx={{ mt: 4, mb: 2, fontWeight: 600 }} {...props} />,
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }} {...props} />,
+  li: (props: React.HTMLAttributes<HTMLLIElement>) => <Typography component="li" variant="body1" sx={{ mb: 1, color: 'text.secondary' }} {...props} />,
+  a: (props: React.HTMLAttributes<HTMLAnchorElement>) => <Typography component="a" variant="body1" color="primary" sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }} {...props} />,
+  table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <Box
       sx={{
         my: 4,
@@ -50,7 +56,7 @@ const components = {
       />
     </Box>
   ),
-  thead: (props: any) => (
+  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
     <Box
       component="thead"
       sx={{
@@ -59,7 +65,7 @@ const components = {
       {...props}
     />
   ),
-  th: (props: any) => (
+  th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
     <Box
       component="th"
       sx={{
@@ -75,7 +81,7 @@ const components = {
       {...props}
     />
   ),
-  td: (props: any) => (
+  td: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
     <Box
       component="td"
       sx={{
@@ -89,7 +95,7 @@ const components = {
       {...props}
     />
   ),
-  blockquote: (props: any) => (
+  blockquote: (props: React.HTMLAttributes<HTMLQuoteElement>) => (
     <Box 
       component="blockquote" 
       sx={{ 
@@ -107,17 +113,17 @@ const components = {
 };
 
 // Create a registry of lazy-loaded components
-const noteComponents: Record<string, React.LazyExoticComponent<any>> = Object.fromEntries(
+const noteComponents: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = Object.fromEntries(
   Object.entries(modules).map(([path, loader]) => {
     const slug = path.split('/').pop()?.replace('.mdx', '') || '';
-    return [slug, React.lazy(loader as any)];
+    return [slug, React.lazy(loader as () => Promise<MDXModule>)];
   })
 );
 
 const NoteView: React.FC = () => {
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   
-  const noteInfo = useMemo(() => notesData.find(n => n.slug === slug), [slug]);
+  const noteInfo = useMemo(() => notesData.find((n: Note) => n.slug === slug), [slug]);
   const NoteContent = slug ? noteComponents[slug] : null;
 
   if (!noteInfo || !NoteContent) {
@@ -165,7 +171,7 @@ const NoteView: React.FC = () => {
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={1} flexWrap="wrap">
-                {noteInfo.tags.map(tag => (
+                {noteInfo.tags.map((tag: string) => (
                   <Chip key={tag} label={tag} variant="outlined" size="small" />
                 ))}
               </Stack>

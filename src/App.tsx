@@ -1,9 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Layout } from './components/Layout';
-import Home from './pages/Home';
-import NotesList from './pages/NotesList';
-import NoteView from './pages/NoteView';
+import { Layout } from './components/Layout.js';
+import Home from './pages/Home.js';
+import NotesList from './pages/NotesList.js';
+import NoteView from './pages/NoteView.js';
 
 const App: React.FC = () => {
   return (

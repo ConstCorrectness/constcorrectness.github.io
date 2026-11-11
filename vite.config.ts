@@ -10,6 +10,14 @@ import rehypeHighlight from 'rehype-highlight'
 
 // https://vite.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2020',
+    },
+  },
+  build: {
+    target: 'es2020',
+  },
   plugins: [
     {
       enforce: 'pre',

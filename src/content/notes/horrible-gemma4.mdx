@@ -1,0 +1,654 @@
+import '../../components/mdxPreviewProcessShim';
+import Gemma4ArchitectureExplorer from '../../components/Gemma4ArchitectureExplorer';
+import MermaidDiagram from '../../components/MermaidDiagram';
+import PythonREPL from '../../components/PythonREPL';
+
+
+
+
+# Horrible Gemma 4 Implementation 😝
+
+Google surprised the world by releasing something actually good! 
+
+
+
+
+## **Models Overview**
+
+Gemma 4 models are designed to deliver frontier-level performance at each size, targeting deployment scenarios from mobile and edge devices (E2B, E4B) to consumer GPUs and workstations (12B, 26B A4B, 31B). They are well-suited for reasoning, agentic workflows, coding, and multimodal understanding.
+
+The models employ a hybrid attention mechanism that interleaves local sliding window attention with full global attention, ensuring the final layer is always global. This hybrid design delivers the processing speed and low memory footprint of a lightweight model without sacrificing the deep awareness required for complex, long-context tasks. To optimize memory for long contexts, global layers feature unified Keys and Values, and apply Proportional RoPE (p-RoPE). 
+
+### Dense Models
+
+| Property | E2B | E4B | 12B Unified | 31B Dense |
+| :---- | :---- | :---- | :---- | :---- |
+| **Total Parameters** | 2.3B effective (5.1B with embeddings) | 4.5B effective (8B with embeddings) | 11.95B | 30.7B |
+| **Layers** | 35 | 42 | 48 | 60 |
+| **Sliding Window** | 512 tokens | 512 tokens | 1024 tokens | 1024 tokens |
+| **Context Length** | 128K tokens | 128K tokens | 256K tokens  | 256K tokens  |
+| **Vocabulary Size** | 262K | 262K | 262K | 262K |
+| **Supported Modalities** | Text, Image, Audio | Text, Image, Audio | Text, Image, Audio | Text, Image |
+| **Vision Encoder Parameters** | *~150M* | *~150M* | - | *~550M* |
+| **Audio Encoder Parameters** | *~300M* | *~300M* | - | No Audio |
+
+The "E" in E2B and E4B stands for "effective" parameters. The smaller models incorporate Per-Layer Embeddings (PLE) to maximize parameter efficiency in on-device deployments. Rather than adding more layers or parameters to the model, PLE gives each decoder layer its own small embedding for every token. These embedding tables are large but are only used for quick lookups, which is why the effective parameter count is much smaller than the total.
+
+The "Unified" in Gemma 4 12B Unified refers to its encoder-free architecture. Other Gemma 4 models use dedicated encoders to process multimodal data before passing it to the LLM. Gemma 4 12B eliminates these encoders entirely, projecting raw image patches and audio waveforms directly into the LLM's embedding space through lightweight linear layers. This unified approach means all modalities flow straight into a single decoder-only transformer, reducing multimodal latency and allowing the entire model to be fine-tuned in one pass.
+
+### Mixture-of-Experts (MoE) Model
+
+| Property | 26B A4B MoE |
+| :---- | :---- |
+| **Total Parameters** | 25.2B |
+| **Active Parameters** | 3.8B |
+| **Layers** | 30 |
+| **Sliding Window** | 1024 tokens |
+| **Context Length** | 256K tokens |
+| **Vocabulary Size** | 262K |
+| **Expert Count** | 8 active / 128 total and 1 shared |
+| **Supported Modalities** | Text, Image |
+| **Vision Encoder Parameters** | *~550M* |
+
+The "A" in 26B A4B stands for "active parameters" in contrast to the total number of parameters the model contains. By only activating a 4B subset of parameters during inference, the Mixture-of-Experts model runs much faster than its 26B total might suggest. This makes it an excellent choice for fast inference compared to the dense 31B model since it runs almost as fast as a 4B-parameter model.
+
+
+
+
+<PythonREPL
+  packages={['numpy, transformers']}
+  code={`
+  
+  # Multimodal, a "Processor" instead of Tokenizer
+  from transformers import AutoModelForMultimodalLM, AutoProcessor
+  messages = [
+    { 'role': 'user': 'content': [
+        { 'type': 'text', 'text': 'The cat sat on the' },
+      ],
+    }
+  ]
+
+  processor = AutoProcessor.from_pretrained('google/gemm4-12B')
+  model = AutoModelForMultimodalLM.from_pretrained('google/gemm4-12B')
+
+  print(model.config)
+  `} />
+
+
+
+```jinja
+
+{# 
+  Template: Google Gemma 4 Canonical Chat Template
+  Author: Google Gemma Engineering Team
+  Published: 2026-07-09
+  Context: Fixed tool-calling loops, turn closures, and thinking content-ordering.
+ #}
+{%- macro format_parameters(properties, required, filter_keys=false) -%}
+	{%- set standard_keys = ["description", "type", "properties", "required", "nullable"] -%}
+	{%- set ns = namespace(found_first=false) -%}
+	{%- for (key, value) in properties | dictsort -%}
+		{%- set add_comma = false -%}
+		{%- if not filter_keys or key not in standard_keys -%}
+			{%- if ns.found_first -%}
+				{{- "," -}}
+			{%- endif -%}
+			{%- set ns.found_first = true -%}
+			{{- key -}}
+			{{- ":{" -}}
+			{%- if value["description"] -%}
+				{{- "description:<|\"|>" -}}
+				{{- value["description"] -}}
+				{{- "<|\"|>" -}}
+				{%- set add_comma = true -%}
+			{%- endif -%}
+			{%- if value["type"] | upper == "STRING" -%}
+				{%- if value["enum"] -%}
+					{%- if add_comma -%}
+						{{- "," -}}
+					{%- else -%}
+						{%- set add_comma = true -%}
+					{%- endif -%}
+					{{- "enum:" -}}
+					{{- format_argument(value["enum"]) -}}
+				{%- endif -%}
+			{%- elif value["type"] | upper == "ARRAY" -%}
+				{%- if value["items"] is mapping and value["items"] -%}
+					{%- if add_comma -%}
+						{{- "," -}}
+					{%- else -%}
+						{%- set add_comma = true -%}
+					{%- endif -%}
+					{{- "items:{" -}}
+					{%- set ns_items = namespace(found_first=false) -%}
+					{%- for (item_key, item_value) in value["items"] | dictsort -%}
+						{%- if item_value is not none -%}
+							{%- if ns_items.found_first -%}
+								{{- "," -}}
+							{%- endif -%}
+							{%- set ns_items.found_first = true -%}
+							{%- if item_key == "properties" -%}
+								{{- "properties:{" -}}
+								{%- if item_value is mapping -%}
+									{{- format_parameters(item_value, value["items"]["required"] | default([])) -}}
+								{%- endif -%}
+								{{- "}" -}}
+							{%- elif item_key == "required" -%}
+								{{- "required:[" -}}
+								{%- for req_item in item_value -%}
+									{{- "<|\"|>" -}}
+									{{- req_item -}}
+									{{- "<|\"|>" -}}
+									{%- if not loop.last -%}
+										{{- "," -}}
+									{%- endif -%}
+								{%- endfor -%}
+								{{- "]" -}}
+							{%- elif item_key == "type" -%}
+								{%- if item_value is string -%}
+									{{- "type:" -}}
+									{{- format_argument(item_value | upper) -}}
+								{%- else -%}
+									{{- "type:" -}}
+									{{- format_argument(item_value | map("upper") | list) -}}
+								{%- endif -%}
+							{%- else -%}
+								{{- item_key -}}
+								{{- ":" -}}
+								{{- format_argument(item_value) -}}
+							{%- endif -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{{- "}" -}}
+				{%- endif -%}
+			{%- endif -%}
+			{%- if value["nullable"] -%}
+				{%- if add_comma -%}
+					{{- "," -}}
+				{%- else -%}
+					{%- set add_comma = true -%}
+				{%- endif -%}
+				{{- "nullable:true" -}}
+			{%- endif -%}
+			{%- if value["type"] | upper == "OBJECT" -%}
+				{%- if value["properties"] is defined and value["properties"] is mapping -%}
+					{%- if add_comma -%}
+						{{- "," -}}
+					{%- else -%}
+						{%- set add_comma = true -%}
+					{%- endif -%}
+					{{- "properties:{" -}}
+					{{- format_parameters(value["properties"], value["required"] | default([])) -}}
+					{{- "}" -}}
+				{%- elif value is mapping -%}
+					{%- if add_comma -%}
+						{{- "," -}}
+					{%- else -%}
+						{%- set add_comma = true -%}
+					{%- endif -%}
+					{{- "properties:{" -}}
+					{{- format_parameters(value, value["required"] | default([]), filter_keys=true) -}}
+					{{- "}" -}}
+				{%- endif -%}
+				{%- if value["required"] -%}
+					{%- if add_comma -%}
+						{{- "," -}}
+					{%- else -%}
+						{%- set add_comma = true -%}
+					{%- endif -%}
+					{{- "required:[" -}}
+					{%- for item in value["required"] | default([]) -%}
+						{{- "<|\"|>" -}}
+						{{- item -}}
+						{{- "<|\"|>" -}}
+						{%- if not loop.last -%}
+							{{- "," -}}
+						{%- endif -%}
+					{%- endfor -%}
+					{{- "]" -}}
+				{%- endif -%}
+			{%- endif -%}
+			{%- if add_comma -%}
+				{{- "," -}}
+			{%- else -%}
+				{%- set add_comma = true -%}
+			{%- endif -%}
+			{{- "type:<|\"|>" -}}
+			{{- value["type"] | upper -}}
+			{{- "<|\"|>}" -}}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endmacro -%}
+{%- macro format_function_declaration(tool_data) -%}
+	{{- "declaration:" -}}
+	{{- tool_data["function"]["name"] -}}
+	{{- "{description:<|\"|>" -}}
+	{{- tool_data["function"]["description"] -}}
+	{{- "<|\"|>" -}}
+	{%- set params = tool_data["function"]["parameters"] -%}
+	{%- if params -%}
+		{{- ",parameters:{" -}}
+		{%- if params["properties"] -%}
+			{{- "properties:{" -}}
+			{{- format_parameters(params["properties"], params["required"]) -}}
+			{{- "}," -}}
+		{%- endif -%}
+		{%- if params["required"] -%}
+			{{- "required:[" -}}
+			{%- for item in params["required"] -%}
+				{{- "<|\"|>" -}}
+				{{- item -}}
+				{{- "<|\"|>" -}}
+				{{- "," if not loop.last -}}
+			{%- endfor -%}
+			{{- "]," -}}
+		{%- endif -%}
+		{%- if params["type"] -%}
+			{{- "type:<|\"|>" -}}
+			{{- params["type"] | upper -}}
+			{{- "<|\"|>}" -}}
+		{%- endif -%}
+	{%- endif -%}
+	{%- if "response" in tool_data["function"] -%}
+		{%- set response_declaration = tool_data["function"]["response"] -%}
+		{{- ",response:{" -}}
+		{%- if response_declaration["description"] -%}
+			{{- "description:<|\"|>" -}}
+			{{- response_declaration["description"] -}}
+			{{- "<|\"|>," -}}
+		{%- endif -%}
+		{%- if response_declaration["type"] | upper == "OBJECT" -%}
+			{{- "type:<|\"|>" -}}
+			{{- response_declaration["type"] | upper -}}
+			{{- "<|\"|>}" -}}
+		{%- endif -%}
+	{%- endif -%}
+	{{- "}" -}}
+{%- endmacro -%}
+{%- macro format_argument(argument, escape_keys=True) -%}
+	{%- if argument is none -%}
+		{{- "null" -}}
+	{%- elif argument is string -%}
+		{{- "<|\"|>" + argument + "<|\"|>" -}}
+	{%- elif argument is boolean -%}
+		{{- "true" if argument else "false" -}}
+	{%- elif argument is mapping -%}
+		{{- "{" -}}
+		{%- set ns = namespace(found_first=false) -%}
+		{%- for (key, value) in argument | dictsort -%}
+			{%- if ns.found_first -%}
+				{{- "," -}}
+			{%- endif -%}
+			{%- set ns.found_first = true -%}
+			{%- if escape_keys -%}
+				{{- "<|\"|>" + key + "<|\"|>" -}}
+			{%- else -%}
+				{{- key -}}
+			{%- endif -%}
+			{{- ":" -}}
+			{{- format_argument(value, escape_keys=escape_keys) -}}
+		{%- endfor -%}
+		{{- "}" -}}
+	{%- elif argument is sequence -%}
+		{{- "[" -}}
+		{%- for item in argument -%}
+			{{- format_argument(item, escape_keys=escape_keys) -}}
+			{%- if not loop.last -%}
+				{{- "," -}}
+			{%- endif -%}
+		{%- endfor -%}
+		{{- "]" -}}
+	{%- else -%}
+		{{- argument -}}
+	{%- endif -%}
+{%- endmacro -%}
+{%- macro strip_thinking(text) -%}
+	{%- set ns = namespace(result="") -%}
+	{%- for part in text.split("<channel|>") -%}
+		{%- if "<|channel>" in part -%}
+			{%- set ns.result = ns.result + part.split("<|channel>")[0] -%}
+		{%- else -%}
+			{%- set ns.result = ns.result + part -%}
+		{%- endif -%}
+	{%- endfor -%}
+	{{- ns.result | trim -}}
+{%- endmacro -%}
+{%- macro format_tool_response_block(tool_name, response) -%}
+	{{- "<|tool_response>" -}}
+	{%- if response is mapping -%}
+		{{- "response:" + tool_name + "{" -}}
+		{%- for (key, value) in response | dictsort -%}
+			{{- key -}}
+			{{- ":" -}}
+			{{- format_argument(value, escape_keys=False) -}}
+			{%- if not loop.last -%}
+				{{- "," -}}
+			{%- endif -%}
+		{%- endfor -%}
+		{{- "}" -}}
+	{%- else -%}
+		{{- "response:" + tool_name + "{value:" + format_argument(response, escape_keys=False) + "}" -}}
+	{%- endif -%}
+	{{- "<tool_response|>" -}}
+{%- endmacro -%}
+{#  ===== SETUP =====  #}
+{%- set ns = namespace(prev_message_type=None, prev_non_tool_role=None) -%}
+{%- set loop_messages = messages -%}
+{%- set enable_thinking = enable_thinking | default(false) -%}
+{%- set preserve_thinking = preserve_thinking | default(false) -%}
+{{- bos_token -}}
+{#  Handle System/Tool Definitions Block  #}
+{%- if enable_thinking or tools or messages and messages[0]["role"] in ["system", "developer"] -%}
+	{{- "<|turn>system\n" -}}
+	{#  Inject Thinking token at the very top of the FIRST system turn  #}
+	{%- if enable_thinking -%}
+		{{- "<|think|>\n" -}}
+		{%- set ns.prev_message_type = "think" -%}
+	{%- endif -%}
+	{%- if messages and messages[0]["role"] in ["system", "developer"] -%}
+		{%- if messages[0]["content"] is string -%}
+			{{- messages[0]["content"] | trim -}}
+		{%- elif messages[0]["content"] is sequence -%}
+			{%- for item in messages[0]["content"] -%}
+				{{- item["text"] | trim + " " -}}
+			{%- endfor -%}
+		{%- endif -%}
+		{%- set loop_messages = messages[1:] -%}
+	{%- endif -%}
+	{%- if tools -%}
+		{%- for tool in tools -%}
+			{{- "<|tool>" -}}
+			{{- format_function_declaration(tool) | trim -}}
+			{{- "<tool|>" -}}
+		{%- endfor -%}
+		{%- set ns.prev_message_type = "tool" -%}
+	{%- endif -%}
+	{{- "<turn|>\n" -}}
+{%- endif -%}
+{#  Pre-scan: find last user message index for reasoning guard  #}
+{%- set ns_turn = namespace(last_user_idx=-1) -%}
+{%- for i in range(loop_messages | length) -%}
+	{%- if loop_messages[i]["role"] == "user" -%}
+		{%- set ns_turn.last_user_idx = i -%}
+	{%- endif -%}
+{%- endfor -%}
+{#  Loop through messages  #}
+{%- for message in loop_messages -%}
+	{%- if message["role"] != "tool" -%}
+		{%- set ns.prev_message_type = None -%}
+		{%- set role = "model" if message["role"] == "assistant" else message["role"] -%}
+		{#  Detect continuation using tracked state — O(1) instead of O(n) backward scan  #}
+		{%- set continue_same_model_turn = role == "model" and ns.prev_non_tool_role == "assistant" -%}
+		{%- if not continue_same_model_turn -%}
+			{{- "<|turn>" + role + "\n" -}}
+		{%- endif -%}
+		{#  Render reasoning/reasoning_content as thinking channel  #}
+		{%- set thinking_text = message.get("reasoning") or message.get("reasoning_content") -%}
+		{%- set thinking_gate = loop.index0 > ns_turn.last_user_idx or preserve_thinking and message.get("tool_calls") -%}
+		{%- if thinking_text and thinking_gate -%}
+			{{- "<|channel>thought\n" + thinking_text + "\n<channel|>" -}}
+		{%- endif -%}
+		{%- if message.get("tool_calls") -%}
+			{%- for tool_call in message.get("tool_calls") -%}
+				{%- set function = tool_call["function"] -%}
+				{{- "<|tool_call>call:" + function["name"] + "{" -}}
+				{%- if function["arguments"] is mapping -%}
+					{%- set ns_args = namespace(found_first=false) -%}
+					{%- for (key, value) in function["arguments"] | dictsort -%}
+						{%- if ns_args.found_first -%}
+							{{- "," -}}
+						{%- endif -%}
+						{%- set ns_args.found_first = true -%}
+						{{- key -}}
+						{{- ":" -}}
+						{{- format_argument(value, escape_keys=False) -}}
+					{%- endfor -%}
+				{%- elif function["arguments"] is none -%}
+
+				{%- else -%}
+					{{- raise_exception("chat_template: tool_calls[].function.arguments must be a JSON object (mapping), not a string. Deserialize arguments before passing to the template.") -}}
+				{%- endif -%}
+				{{- "}<tool_call|>" -}}
+			{%- endfor -%}
+			{%- set ns.prev_message_type = "tool_call" -%}
+		{%- endif -%}
+		{%- set ns_tr_out = namespace(flag=false) -%}
+		{%- if message.get("tool_responses") -%}
+			{#  Legacy: tool_responses embedded on the assistant message (Google/Gemma native)  #}
+			{%- for tool_response in message.get("tool_responses") -%}
+				{{- format_tool_response_block(tool_response["name"] | default("unknown", true), tool_response["response"]) -}}
+				{%- set ns_tr_out.flag = true -%}
+				{%- set ns.prev_message_type = "tool_response" -%}
+			{%- endfor -%}
+		{%- elif message.get("tool_calls") -%}
+			{#  OpenAI Chat Completions: forward-scan consecutive role:tool messages  #}
+			{%- set ns_tool_scan = namespace(stopped=false) -%}
+			{%- for k in range(loop.index0 + 1, loop_messages | length) -%}
+				{%- if ns_tool_scan.stopped -%}
+
+				{%- elif loop_messages[k]["role"] != "tool" -%}
+					{%- set ns_tool_scan.stopped = true -%}
+				{%- else -%}
+					{%- set follow = loop_messages[k] -%}
+					{#  Resolve tool_call_id to function name  #}
+					{%- set ns_tname = namespace(name=follow.get("name") or "unknown") -%}
+					{%- for tc in message.get("tool_calls") -%}
+						{%- if tc.get("id") == follow.get("tool_call_id") -%}
+							{%- set ns_tname.name = tc["function"]["name"] -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{#  Handle content as string or content-parts array  #}
+					{%- set tool_body = follow.get("content") -%}
+					{%- if tool_body is string -%}
+						{{- format_tool_response_block(ns_tname.name, tool_body) -}}
+					{%- elif tool_body is sequence and tool_body is not string -%}
+						{%- set ns_txt = namespace(s="") -%}
+						{%- for part in tool_body -%}
+							{%- if part.get("type") == "text" -%}
+								{%- set ns_txt.s = ns_txt.s + part.get("text") | default("") -%}
+							{%- endif -%}
+						{%- endfor -%}
+						{{- format_tool_response_block(ns_tname.name, ns_txt.s) -}}
+						{%- for part in tool_body -%}
+							{%- if part.get("type") in ["image", "image_url"] -%}
+								{{- "<|image|>" -}}
+							{%- elif part.get("type") in ["audio", "input_audio"] -%}
+								{{- "<|audio|>" -}}
+							{%- elif part.get("type") == "video" -%}
+								{{- "<|video|>" -}}
+							{%- endif -%}
+						{%- endfor -%}
+					{%- else -%}
+						{{- format_tool_response_block(ns_tname.name, tool_body) -}}
+					{%- endif -%}
+					{%- set ns_tr_out.flag = true -%}
+					{%- set ns.prev_message_type = "tool_response" -%}
+				{%- endif -%}
+			{%- endfor -%}
+		{%- endif -%}
+		{%- set captured_content -%}
+			{%- if message.get("content") is string -%}
+				{%- if role == "model" -%}
+					{{- strip_thinking(message["content"]) -}}
+				{%- else -%}
+					{{- message["content"] | trim -}}
+				{%- endif -%}
+			{%- elif message.get("content") is sequence -%}
+				{%- for item in message["content"] -%}
+					{%- if item.get("type") == "text" -%}
+						{%- if role == "model" -%}
+							{{- strip_thinking(item["text"]) -}}
+						{%- else -%}
+							{{- item["text"] | trim -}}
+						{%- endif -%}
+					{%- elif item.get("type") in ["image", "image_url"] -%}
+						{{- "<|image|>" -}}
+					{%- elif item.get("type") in ["audio", "input_audio"] -%}
+						{{- "<|audio|>" -}}
+					{%- elif item.get("type") == "video" -%}
+						{{- "<|video|>" -}}
+					{%- endif -%}
+				{%- endfor -%}
+			{%- endif -%}
+		{%- endset -%}
+		{{- captured_content -}}
+		{%- set has_content = captured_content | trim | length > 0 -%}
+		{#  Forward-scan: find next non-tool message role for continuation detection  #}
+		{%- set next_nt = namespace(role=None, found=false) -%}
+		{%- for j in range(loop.index0 + 1, loop_messages | length) -%}
+			{%- if not next_nt.found -%}
+				{%- if loop_messages[j]["role"] != "tool" -%}
+					{%- set next_nt.role = loop_messages[j]["role"] -%}
+					{%- set next_nt.found = true -%}
+				{%- endif -%}
+			{%- endif -%}
+		{%- endfor -%}
+		{%- set continues_into_next = role == "model" and next_nt.role == "assistant" and (not message.get("tool_calls") or ns_tr_out.flag) -%}
+		{%- if ns.prev_message_type == "tool_call" and not ns_tr_out.flag -%}
+			{{- "<|tool_response>" -}}
+		{%- elif continues_into_next -%}
+
+		{%- elif not (ns_tr_out.flag and not has_content and not next_nt.found) -%}
+			{{- "<turn|>\n" -}}
+		{%- endif -%}
+		{#  Track previous non-tool role for next iteration (avoids O(n) backward scan)  #}
+		{%- set ns.prev_non_tool_role = message["role"] -%}
+	{%- endif -%}
+{%- endfor -%}
+{%- if add_generation_prompt -%}
+	{%- if ns.prev_message_type != "tool_response" and ns.prev_message_type != "tool_call" -%}
+		{{- "<|turn>model\n" -}}
+	{%- elif ns.prev_message_type == "tool_response" and enable_thinking -%}
+		{{- "<|channel>thought\n" -}}
+	{%- endif -%}
+{%- endif -%}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gemma 4 is an open-weight family that spans very small edge models, an encoder-free multimodal laptop model, a sparse Mixture-of-Experts (MoE) model, and a quality-focused dense model. The interesting part is not just *how big* each checkpoint is — it is where each architecture chooses to spend compute, memory, and latency.
+
+This page is a conceptual map of those choices, not a replacement for the model card. Pick a model family and click through the pipeline below; the memory panel is especially useful for seeing why “active parameters” and “weights you must load” are different ideas.
+
+<Gemma4ArchitectureExplorer />
+
+## Four shapes in one model family
+
+Gemma 4 ships five sizes but four architecture patterns. E2B and E4B share the efficient edge-oriented design; the other three introduce a unified multimodal path, sparse MoE routing, or a conventional dense backbone.
+
+<MermaidDiagram
+  title="Gemma 4 family at a glance"
+  caption="Select a card in the explorer above to examine the corresponding path."
+  chart={`flowchart LR
+    G[Gemma 4 family] --> E[E2B / E4B<br>Efficient + PLE]
+    G --> U[12B<br>Unified]
+    G --> M[26B A4B<br>Mixture of Experts]
+    G --> D[31B<br>Dense]
+    E --> EDGE[Mobile · edge · browser]
+    U --> LAPTOP[Encoder-free multimodality]
+    M --> THROUGHPUT[Sparse active compute]
+    D --> QUALITY[Maximum dense quality]
+    classDef blue fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef violet fill:#ede9fe,stroke:#7c3aed,color:#2e1065
+    classDef green fill:#ccfbf1,stroke:#0f766e,color:#134e4a
+    classDef pink fill:#fce7f3,stroke:#db2777,color:#831843
+    class E,EDGE blue
+    class U,LAPTOP violet
+    class M,THROUGHPUT green
+    class D,QUALITY pink`}
+ />
+
+### E2B and E4B: efficient models with per-layer embeddings
+
+The **E** means *effective parameters*. Instead of simply deepening the decoder, the E2B and E4B variants use **per-layer embeddings (PLE)**: every decoder layer has a small, dedicated embedding table. Those tables increase loaded-weight memory, but token lookup is cheap, which is a useful trade on mobile hardware. Both edge models have a 128K-token context window and natively accept audio in addition to text and images.
+
+### 12B: one token space for text, vision, and audio
+
+The 12B Unified model removes separate vision and audio encoder stacks. Vision goes through a lightweight projection, positional embedding, and normalisation; raw audio is projected into the same space as text tokens. From that point, the shared language-model backbone does the multimodal work. This architectural shortcut is why “encoder-free” matters: fewer specialised stacks means a more direct route from input to the decoder.
+
+<MermaidDiagram
+  title="12B Unified: encoder-free multimodal path"
+  caption="All three modalities are represented in one stream before the shared decoder."
+  chart={`flowchart LR
+    T[Text tokens] --> S[Shared token stream]
+    I[Image patches] --> V[Single vision projection<br>position + norm] --> S
+    A[Raw audio] --> P[Audio projection] --> S
+    S --> B[12B decoder backbone]
+    B --> M[MTP drafter / verification]
+    M --> O[Text output or tool call]
+    classDef input fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef project fill:#ccfbf1,stroke:#0f766e,color:#134e4a
+    classDef core fill:#ede9fe,stroke:#7c3aed,color:#2e1065
+    classDef out fill:#fce7f3,stroke:#db2777,color:#831843
+    class T,I,A input
+    class V,P,S project
+    class B,M core
+    class O out`}
+ />
+
+### 26B A4B: MoE separates capacity from per-token work
+
+The 26B A4B model is a **Mixture of Experts**. A router scores its expert feed-forward networks and sends a token through a small selected subset. That is what makes about 4B parameters active per token, even though the model has 26B total parameters. It does *not* mean that it loads like a 4B model: fast routing requires the full expert bank to be resident in memory.
+
+<MermaidDiagram
+  title="26B A4B: sparse expert routing"
+  caption="The router selects specialist paths per token; unselected experts do not run for that token."
+  chart={`flowchart TB
+    X[Context-aware token] --> R{Router<br>score experts}
+    R -->|selected| E1[Expert 1]
+    R -->|selected| E2[Expert 2]
+    R -->|selected| E3[Expert 3]
+    R -. not selected .-> EX[Other resident experts]
+    E1 --> C[Weighted combine]
+    E2 --> C
+    E3 --> C
+    C --> N[Next transformer block]
+    classDef router fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef expert fill:#ccfbf1,stroke:#0f766e,color:#134e4a
+    classDef muted fill:#f1f5f9,stroke:#94a3b8,color:#475569
+    classDef core fill:#ede9fe,stroke:#7c3aed,color:#2e1065
+    class R router
+    class E1,E2,E3 expert
+    class EX muted
+    class X,C,N core`}
+ />
+
+### 31B: dense and predictable
+
+The 31B model is the dense counterpoint to the MoE. Each token goes through every parameter path in its feed-forward layers. There is no routing decision and no inactive expert bank — just uniform, predictable dense compute focused on its largest general-purpose model quality.
+
+## What every variant shares
+
+The family supports text and image input, a dedicated Multi-Token Prediction (MTP) drafter for speculative decoding, tool/function calling, and long context. The small E2B/E4B models have 128K context; the 12B, 26B A4B, and 31B models have 256K. Audio is native to E2B, E4B, and 12B only.
+
+| Variant | Architecture | Context | Native audio | A useful deployment intuition |
+| --- | --- | ---: | :---: | --- |
+| E2B / E4B | Efficient decoder + PLE | 128K | Yes | Spend memory on layer-specific lookup tables to conserve edge compute. |
+| 12B | Unified, encoder-free | 256K | Yes | Put all modalities in one token space and let the decoder reason over them. |
+| 26B A4B | Sparse MoE | 256K | No | Keep high capacity while activating only a small expert subset per token. |
+| 31B | Dense decoder | 256K | No | Pay dense compute for the family’s strongest general-purpose quality. |
+
+## A final implementation detail: loading memory is not context memory
+
+The explorer’s bars describe approximate memory to load weights at a chosen precision, including the documented loading overhead. During an actual run, the KV cache grows with prompt and generated tokens, so long-context sessions need extra headroom. Quantizing from BF16 to 4-bit makes a dramatic difference to the weight footprint, but it does not erase the context-cache cost.
+
+For the canonical specifications, use the [Gemma 4 model overview](https://ai.google.dev/gemma/docs/core), [model card](https://ai.google.dev/gemma/docs/core/model_card_4), and the [12B Unified announcement](https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemma-4-12B/).
+

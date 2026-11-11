@@ -2,7 +2,7 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';
 import CodeIcon from '@mui/icons-material/Code';
 import { Link as RouterLink } from 'react-router-dom';
-import ThemeToggle from './ThemeToggle';
+import ThemeToggle from './ThemeToggle.js';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

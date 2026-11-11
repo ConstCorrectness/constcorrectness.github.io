@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { usePython } from 'react-py';
 import { Box, Button, CircularProgress, Typography, Paper, useTheme } from '@mui/material';
+
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark, prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -13,19 +14,8 @@ interface PythonREPLProps {
 export const PythonREPL: React.FC<PythonREPLProps> = ({ code: initialCode, packages = [] }) => {
   const theme = useTheme();
   const { runPython, stdout, stderr, isLoading, isRunning } = usePython({ packages: { official: packages } });
-  const [output, setOutput] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (stdout) {
-      setTimeout(() => setOutput((prev) => [...prev, stdout]), 0);
-    }
-  }, [stdout]);
-
-  useEffect(() => {
-    if (stderr) {
-      setTimeout(() => setOutput((prev) => [...prev, `Error: ${stderr}`]), 0);
-    }
-  }, [stderr]);
+  const hasOutput = stdout || stderr;
 
   return (
     <Paper 
@@ -56,10 +46,7 @@ export const PythonREPL: React.FC<PythonREPLProps> = ({ code: initialCode, packa
             variant="contained" 
             color="primary" 
             startIcon={isRunning ? <CircularProgress size={16} color="inherit" /> : <PlayArrowIcon />}
-            onClick={() => {
-                setOutput([]);
-                runPython(initialCode);
-            }}
+            onClick={() => runPython(initialCode)}
             disabled={isLoading || isRunning}
             sx={{ borderRadius: 1.5 }}
         >
@@ -80,7 +67,7 @@ export const PythonREPL: React.FC<PythonREPLProps> = ({ code: initialCode, packa
         {initialCode.trim()}
       </SyntaxHighlighter>
 
-      {output.length > 0 && (
+      {hasOutput && (
         <Box sx={{ 
           p: 2, 
           bgcolor: theme.palette.mode === 'dark' ? '#000' : '#f0f0f0', 
@@ -88,9 +75,16 @@ export const PythonREPL: React.FC<PythonREPLProps> = ({ code: initialCode, packa
           borderColor: 'divider' 
         }}>
             <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 800 }}>Output</Typography>
-            <Box component="pre" sx={{ m: 0, mt: 1, whiteSpace: 'pre-wrap', color: theme.palette.mode === 'dark' ? '#4caf50' : '#2e7d32', fontFamily: 'monospace', fontSize: '0.9rem' }}>
-                {output.join('\n')}
-            </Box>
+            {stdout && (
+              <Box component="pre" sx={{ m: 0, mt: 1, whiteSpace: 'pre-wrap', color: theme.palette.mode === 'dark' ? '#4caf50' : '#2e7d32', fontFamily: 'monospace', fontSize: '0.9rem' }}>
+                  {stdout}
+              </Box>
+            )}
+            {stderr && (
+              <Box component="pre" sx={{ m: 0, mt: 1, whiteSpace: 'pre-wrap', color: theme.palette.error.main, fontFamily: 'monospace', fontSize: '0.9rem' }}>
+                  {stderr}
+              </Box>
+            )}
         </Box>
       )}
     </Paper>

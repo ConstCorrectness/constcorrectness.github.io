@@ -11,11 +11,11 @@ import {
   Divider,
   useTheme
 } from '@mui/material';
-import ErrorBoundary from '../components/ErrorBoundary';
-import { ModelViewer } from '../components/ModelViewer';
+import ErrorBoundary from '../components/ErrorBoundary.js';
+import { ModelViewer } from '../components/ModelViewer.js';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Link } from 'react-router-dom';
-import { notes } from '../data/notes';
+import { notes, type Note } from '../data/notes.js';
 
 const Home: React.FC = () => {
   const theme = useTheme();
@@ -111,7 +111,7 @@ const Home: React.FC = () => {
         </Stack>
         
         <Grid container spacing={4}>
-          {featuredNotes.map((note) => (
+          {featuredNotes.map((note: Note) => (
             <Grid size={{ xs: 12, md: 4 }} key={note.slug}>
               <Paper 
                 elevation={0}
@@ -146,7 +146,7 @@ const Home: React.FC = () => {
                   {note.excerpt}
                 </Typography>
                 <Stack direction="row" spacing={1} flexWrap="wrap">
-                  {note.tags.slice(0, 2).map(tag => (
+                  {note.tags.slice(0, 2).map((tag: string) => (
                     <Chip key={tag} label={tag} size="small" variant="outlined" sx={{ borderRadius: 1 }} />
                   ))}
                 </Stack>

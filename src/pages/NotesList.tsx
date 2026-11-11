@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
-import { notes } from '../data/notes';
+import { notes, type Note } from '../data/notes.js';
 
 const NotesList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,12 +22,12 @@ const NotesList: React.FC = () => {
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
-    notes.forEach(note => note.tags.forEach(tag => tags.add(tag)));
+    notes.forEach((note: Note) => note.tags.forEach((tag: string) => tags.add(tag)));
     return Array.from(tags).sort();
   }, []);
 
   const filteredNotes = useMemo(() => {
-    return notes.filter(note => {
+    return notes.filter((note: Note) => {
       const matchesSearch = note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             note.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesTags = selectedTags.length === 0 || 
@@ -88,7 +88,7 @@ const NotesList: React.FC = () => {
 
       <Grid container spacing={4}>
         {filteredNotes.length > 0 ? (
-          filteredNotes.map((note) => (
+          filteredNotes.map((note: Note) => (
             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={note.slug}>
               <Card 
                 elevation={0}
@@ -127,7 +127,7 @@ const NotesList: React.FC = () => {
                       {note.excerpt}
                     </Typography>
                     <Box sx={{ mt: 'auto', display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {note.tags.map(tag => (
+                      {note.tags.map((tag: string) => (
                         <Chip 
                           key={tag} 
                           label={tag} 
