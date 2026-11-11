@@ -1,6 +1,7 @@
 # --- Node.js & Vite ---
 node_modules/
 dist/
+build/
 dist-ssr/
 *.local
 npm-debug.log*
@@ -48,3 +49,4 @@ Thumbs.db
 .playwright-mcp/
 
 
+.next
