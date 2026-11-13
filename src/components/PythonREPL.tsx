@@ -90,3 +90,5 @@ export const PythonREPL: React.FC<PythonREPLProps> = ({ code: initialCode, packa
     </Paper>
   );
 };
+
+export default PythonREPL;
