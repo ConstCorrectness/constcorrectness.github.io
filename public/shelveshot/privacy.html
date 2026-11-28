@@ -35,11 +35,12 @@
 <body>
 <main>
   <h1>ShelveShot Privacy Policy</h1>
-  <p class="meta">Effective November 24, 2026 · ConstCorrectness</p>
+  <p class="meta">Effective November 28, 2026 · ConstCorrectness</p>
 
   <div class="box">
-    <strong>The short version:</strong> ShelveShot has no ads, doesn't track you across other apps or websites,
-    and we never sell your data. You can play the single-player game without an online account. If you play online,
+    <strong>The short version:</strong> ShelveShot's only ad is an optional video you can choose to watch for two
+    extra shots in Precision Shelves. Ads aren't personalised unless you turn on Personalised ads in Settings, and we
+    never sell your data. You can play the single-player game without an online account. If you play online,
     we keep a game account (an anonymous ID, the name you pick, your ratings, coins and friends) so online play works.
     Crash reports and usage statistics are sent only if you say yes when the game first asks, and you can change
     that in Settings. You can delete your online account inside the game at any time.
@@ -81,6 +82,13 @@
         game log lines, the app version, device model and operating system, sent to Sentry. They don't include your
         name or player ID.</td>
         <td>To find and fix bugs.</td></tr>
+      <tr><td>Ads</td><td>From when the game starts: your device's advertising ID (on iPhone only if you allow
+        tracking), your IP address and the approximate location it gives, device and app details, and how you
+        interact with ads you watch, sent to Unity LevelPlay and the ad networks it uses (currently Unity Ads).</td>
+        <td>To show the optional video ad and give you its reward, measure ad delivery and prevent ad fraud. Only if
+        you turn on Personalised ads are they also used to choose ads based on your interests.</td></tr>
+      <tr><td>Notifications</td><td>Your device's push token, stored with your player ID.</td>
+        <td>To tell you about friend invites and challenges when you allow notifications.</td></tr>
       <tr><td>Connection data</td><td>Your IP address, processed by Unity's multiplayer services (Lobby, Relay,
         Matchmaker) while you play online. Relay passes game traffic between players so they don't see each
         other's IP address.</td><td>To connect you to other players.</td></tr>
@@ -90,8 +98,8 @@
     </tbody>
   </table>
   <p>Single-player progress (stars, settings) is stored only on your device and never sent to us.</p>
-  <p>We do <strong>not</strong> collect your location, contacts, photos, email address or real name, and we do not
-    use advertising IDs.</p>
+  <p>We do <strong>not</strong> collect your precise location, contacts, photos, email address or real name. Your
+    device's advertising ID is used only by the ad and analytics services listed below, as described above.</p>
 
   <h2>Services we use</h2>
   <p>We don't run our own servers. Online features run on these services, which process data on our behalf:</p>
@@ -99,14 +107,21 @@
     <li><strong>Unity Gaming Services</strong> (Unity Technologies): sign-in, cloud saves, leaderboards, friends,
       matchmaking, multiplayer networking, game settings we can adjust remotely, and usage statistics (only with
       your consent). <a href="https://unity.com/legal/game-player-and-app-user-privacy-policy">Unity's privacy policy</a></li>
+    <li><strong>Unity LevelPlay and Unity Ads</strong> (Unity Technologies): the optional video ad.
+      <a href="https://unity.com/legal/game-player-and-app-user-privacy-policy">Unity's privacy policy</a></li>
     <li><strong>Sentry</strong> (Functional Software, Inc.): crash reports, only with your consent.
       <a href="https://sentry.io/privacy/">Sentry's privacy policy</a></li>
+    <li><strong>Google Firebase</strong> (Google): delivering notifications on Android, and Firebase Analytics,
+      which records basic app usage with an app instance ID and, on Android, the advertising ID.
+      <a href="https://firebase.google.com/support/privacy">Firebase privacy information</a></li>
     <li><strong>Google Play Games and Google Play Billing</strong> (Android): sign-in and purchases.
       <a href="https://policies.google.com/privacy">Google's privacy policy</a></li>
     <li><strong>Apple Game Center and the App Store</strong> (iOS): sign-in and purchases.
       <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a></li>
   </ul>
-  <p>We don't sell or rent your data, and we don't share it for advertising.</p>
+  <p>We don't sell or rent your data. The ad services receive the data in the Ads row above so they can show and
+    measure ads; unless you turn on Personalised ads, we tell them not to use it for personalised advertising (and, under
+    US state privacy laws, not to sell or share it).</p>
 
   <h2>How long we keep it</h2>
   <p>We keep your online data while your account exists. When you delete your account, we delete your player ID,
@@ -122,7 +137,8 @@
       repeated abuse can be recognised.</li>
   </ul>
   <p>Deleting your account also asks Unity Analytics to delete your usage statistics. Crash reports are kept for
-    up to 90 days and then deleted.</p>
+    up to 90 days and then deleted. Data held by the ad services and Firebase is kept under their own policies, linked
+    above.</p>
   <p>See <a href="delete-account.html">how to delete your account</a>.</p>
 
   <h2>Your choices and rights</h2>
@@ -131,6 +147,10 @@
       emailing us.</li>
     <li><strong>Change your name</strong> at any time in the game.</li>
     <li><strong>Crash reports and usage statistics:</strong> turn them on or off at any time in Settings.</li>
+    <li><strong>Personalised ads:</strong> off unless you turn them on in Settings, and you can turn them off again
+      at any time. On iPhone, turning them on also asks whether to allow tracking, which you can change in iOS
+      Settings › Privacy &amp; Security › Tracking. On Android you can reset or delete your advertising ID in the
+      device's settings. Watching the video ad is always optional.</li>
     <li><strong>Report or block a player</strong> from their player card (tap their name). Blocked players' chat,
       friend requests and invites are hidden from you.</li>
     <li><strong>Play offline:</strong> the single-player game works without an online account.</li>
